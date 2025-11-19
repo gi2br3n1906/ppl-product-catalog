@@ -119,20 +119,20 @@
             transform: translateY(0);
         }
         
-        .register-link {
+        .seller-register-link {
             text-align: center;
             margin-top: 20px;
             color: #666;
             font-size: 14px;
         }
         
-        .register-link a {
+        .seller-register-link a {
             color: #01343B;
             text-decoration: none;
             font-weight: 600;
         }
         
-        .register-link a:hover {
+        .seller-register-link a:hover {
             text-decoration: underline;
         }
         
@@ -221,9 +221,9 @@
 
             <button type="submit" class="btn-login">Login</button>
         </form>
-
-        <div class="register-link">
-            Belum punya akun? <a href="{{ route('register') }}">Daftar sekarang</a>
+        
+        <div class="seller-register-link">
+            Belum punya akun? <a href="{{ route('seller.register.form') }}">Daftar sebagai Seller</a>
         </div>
     </div>
 </body>
