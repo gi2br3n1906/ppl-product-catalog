@@ -11,52 +11,6 @@ use Illuminate\Validation\Rules\Password;
 class AuthController extends Controller
 {
     /**
-     * Menampilkan form registrasi
-     */
-    public function showRegisterForm()
-    {
-        return view('auth.register');
-    }
-
-    /**
-     * Proses registrasi user baru
-     */
-    public function register(Request $request)
-    {
-        // Validasi input
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'confirmed', Password::min(8)
-                ->letters()
-                ->mixedCase()
-                ->numbers()
-                ->symbols()
-            ],
-        ], [
-            'name.required' => 'Nama wajib diisi',
-            'email.required' => 'Email wajib diisi',
-            'email.email' => 'Format email tidak valid',
-            'email.unique' => 'Email sudah terdaftar',
-            'password.required' => 'Password wajib diisi',
-            'password.confirmed' => 'Konfirmasi password tidak cocok',
-        ]);
-
-        // Buat user baru
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-        ]);
-
-        // Login otomatis setelah registrasi
-        Auth::login($user);
-
-        // Redirect ke dashboard atau home
-        return redirect()->route('dashboard')->with('success', 'Registrasi berhasil! Selamat datang, ' . $user->name);
-    }
-
-    /**
      * Menampilkan form login
      */
     public function showLoginForm()
