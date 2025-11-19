@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verifikasi Seller - Admin</title>
+    <title>Admin - Verifikasi Seller</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         * {
@@ -14,91 +14,86 @@
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f7fa;
+            background: white;
             min-height: 100vh;
         }
         
         .navbar {
-            background: white;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 15px 30px;
+            background: #01343B;
+            padding: 20px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 3px solid #ACEB02;
         }
         
         .navbar-brand {
-            font-size: 24px;
-            font-weight: bold;
-            background: linear-gradient(135deg, #01343B 0%, #023840 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 20px;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .btn-logout {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .btn-logout:hover {
+            background: white;
+            color: #01343B;
         }
         
         .container {
-            max-width: 1400px;
-            margin: 30px auto;
-            padding: 0 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
         }
         
         .page-header {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
             margin-bottom: 30px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
         
         .page-header h1 {
             color: #01343B;
-            margin-bottom: 10px;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        
+        .page-header p {
+            color: #666;
+            font-size: 14px;
         }
         
         .alert {
             padding: 15px 20px;
-            border-radius: 10px;
+            border-radius: 8px;
             margin-bottom: 20px;
+            font-size: 14px;
         }
         
         .alert-success {
             background-color: #d4edda;
-            border: 1px solid #c3e6cb;
+            border-left: 4px solid #28a745;
             color: #155724;
         }
         
         .alert-error {
             background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
+            border-left: 4px solid #dc3545;
             color: #721c24;
-        }
-        
-        .filter-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .filter-tab {
-            padding: 10px 20px;
-            background: white;
-            border: 2px solid #e1e1e1;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .filter-tab.active {
-            background: #01343B;
-            color: white;
-            border-color: #01343B;
         }
         
         .table-container {
             background: white;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            overflow-x: auto;
+            border: 1px solid #e1e1e1;
+            border-radius: 8px;
+            overflow: hidden;
         }
         
         table {
@@ -107,43 +102,56 @@
         }
         
         th {
-            background: #01343B;
-            color: white;
-            padding: 15px;
+            background: #f8f9fa;
+            color: #01343B;
+            padding: 15px 20px;
             text-align: left;
             font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e1e1e1;
         }
         
         td {
-            padding: 15px;
+            padding: 15px 20px;
             border-bottom: 1px solid #e1e1e1;
+            color: #333;
+            font-size: 14px;
         }
         
-        tr:hover {
+        tbody tr:hover {
             background: #f8f9fa;
+        }
+        
+        tbody tr:last-child td {
+            border-bottom: none;
         }
         
         .badge {
             display: inline-block;
-            padding: 5px 15px;
-            border-radius: 20px;
+            padding: 4px 12px;
+            border-radius: 4px;
             font-size: 12px;
             font-weight: 600;
         }
         
         .badge-pending {
-            background: #fff3cd;
+            background: #FFF9E6;
             color: #856404;
+            border: 1px solid #FFE69C;
         }
         
         .badge-approved {
-            background: #d4edda;
+            background: #E8F5E9;
             color: #155724;
+            border: 1px solid #C3E6CB;
         }
         
         .badge-rejected {
-            background: #f8d7da;
+            background: #FFEBEE;
             color: #721c24;
+            border: 1px solid #F5C6CB;
         }
         
         .btn {
@@ -155,20 +163,23 @@
             text-decoration: none;
             display: inline-block;
             transition: all 0.2s;
+            font-size: 13px;
         }
         
-        .btn-primary {
+        .btn-detail {
             background: #01343B;
             color: white;
         }
         
-        .btn-primary:hover {
+        .btn-detail:hover {
             background: #023840;
+            transform: translateY(-1px);
         }
         
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 13px;
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
         }
         
         .pagination {
@@ -181,17 +192,17 @@
 </head>
 <body>
     <nav class="navbar">
-        <div class="navbar-brand">Admin - Product Catalog</div>
+        <div class="navbar-brand">Admin Panel - CampusMarket</div>
         <form action="{{ route('logout') }}" method="POST">
             @csrf
-            <button type="submit" class="btn btn-primary btn-sm">Logout</button>
+            <button type="submit" class="btn-logout">Logout</button>
         </form>
     </nav>
 
     <div class="container">
         <div class="page-header">
             <h1>Verifikasi Registrasi Seller</h1>
-            <p>Kelola dan verifikasi pendaftaran seller baru</p>
+            <p>Kelola dan verifikasi pendaftaran seller yang masuk</p>
         </div>
 
         @if (session('success'))
@@ -229,32 +240,34 @@
                             <td>{{ $registration->no_hp_pic }}</td>
                             <td>
                                 @if ($registration->status === 'pending')
-                                    <span class="badge badge-pending">⏳ Pending</span>
+                                    <span class="badge badge-pending">Pending</span>
                                 @elseif ($registration->status === 'approved')
-                                    <span class="badge badge-approved">✅ Approved</span>
+                                    <span class="badge badge-approved">Approved</span>
                                 @else
-                                    <span class="badge badge-rejected">❌ Rejected</span>
+                                    <span class="badge badge-rejected">Rejected</span>
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('admin.seller-registrations.show', $registration->id) }}" class="btn btn-primary btn-sm">
-                                    Detail
+                                <a href="{{ route('admin.seller-registrations.show', $registration->id) }}" class="btn btn-detail">
+                                    Lihat Detail
                                 </a>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" style="text-align: center; padding: 40px;">
-                                Tidak ada data registrasi
+                            <td colspan="7" class="empty-state">
+                                Belum ada registrasi seller
                             </td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
 
-            <div class="pagination">
-                {{ $registrations->links() }}
-            </div>
+            @if($registrations->hasPages())
+                <div class="pagination">
+                    {{ $registrations->links() }}
+                </div>
+            @endif
         </div>
     </div>
 </body>
