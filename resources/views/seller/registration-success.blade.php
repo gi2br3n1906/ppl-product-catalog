@@ -102,7 +102,7 @@
 </head>
 <body>
     <div class="success-container">
-        <div class="success-icon">✅</div>
+        <div class="success-icon">✔</div>
         
         <h1>Registrasi Berhasil!</h1>
         

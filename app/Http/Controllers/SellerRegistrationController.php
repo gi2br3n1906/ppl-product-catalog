@@ -155,11 +155,12 @@ class SellerRegistrationController extends Controller
             'verified_by' => auth()->id(),
         ]);
 
-        // Buat user baru untuk seller
+                // Buat akun user untuk seller
         $user = User::create([
             'name' => $registration->nama_pic,
             'email' => $registration->email_pic,
-            'password' => $registration->password, // sudah di-hash sebelumnya
+            'password' => $registration->password, // Password sudah di-hash dari registrasi
+            'role' => 'seller',
         ]);
 
         // Kirim email notifikasi approval

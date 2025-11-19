@@ -390,7 +390,7 @@
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="kab_kota">Kab/Kota <span class="required">*</span></label>
+                    <label for="kab_kota">Kabupaten/Kota <span class="required">*</span></label>
                     <input 
                         type="text" 
                         id="kab_kota" 
@@ -440,16 +440,16 @@
             </div>
 
             <div class="form-group">
-                <label for="foto_pic">Foto PIC (jpg/png, ≤2MB) <span class="required">*</span></label>
+                <label for="foto_pic">Pas Foto PIC (jpg/png, ≤2MB) <span class="required">*</span></label>
                 <div class="file-input-wrapper">
                     <label for="foto_pic" class="file-input-label">
-                        <span id="foto_pic_label">📷 Pilih File Foto</span>
+                        <span id="foto_pic_label">Unggah Pas Foto</span>
                     </label>
                     <input 
                         type="file" 
                         id="foto_pic" 
                         name="foto_pic" 
-                        class="file-input"
+                        class="file-input" 
                         accept="image/jpeg,image/png"
                         required
                         onchange="updateFileName(this, 'foto_pic_label', 'foto_pic_name')"
@@ -462,10 +462,10 @@
             </div>
 
             <div class="form-group">
-                <label for="file_ktp">File KTP (jpg/png/pdf, ≤5MB) <span class="required">*</span></label>
+                <label for="file_ktp">KTP (jpg/png/pdf, ≤5MB) <span class="required">*</span></label>
                 <div class="file-input-wrapper">
                     <label for="file_ktp" class="file-input-label">
-                        <span id="file_ktp_label">📄 Pilih File KTP</span>
+                        <span id="file_ktp_label">Unggah KTP</span>
                     </label>
                     <input 
                         type="file" 

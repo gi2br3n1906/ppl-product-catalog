@@ -23,13 +23,13 @@ Route::middleware('guest')->group(function () {
 
 // Route untuk user yang sudah login (Protected routes)
 Route::middleware('auth')->group(function () {
-    // Dashboard
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-    
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    
+    // Seller Dashboard
+    Route::get('/seller/dashboard', function () {
+        return view('seller.dashboard');
+    })->name('seller.dashboard');
     
     // Admin: Verifikasi Seller
     Route::prefix('admin')->name('admin.')->group(function () {
