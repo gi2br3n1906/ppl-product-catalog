@@ -1,0 +1,18 @@
+<svg width="600" height="400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="600" height="400" fill="#f8f9fa"/>
+  <g>
+    <text x="300" y="150" font-family="Arial, sans-serif" font-size="24" fill="#6c757d" text-anchor="middle" font-weight="bold">
+      ⭐ Data Rating Kosong
+    </text>
+    <text x="300" y="200" font-family="Arial, sans-serif" font-size="16" fill="#adb5bd" text-anchor="middle">
+      Belum ada rating untuk produk Anda
+    </text>
+    <text x="300" y="230" font-family="Arial, sans-serif" font-size="14" fill="#adb5bd" text-anchor="middle">
+      Tunggu pembeli memberikan rating pada produk Anda
+    </text>
+  </g>
+  <g opacity="0.3">
+    <circle cx="300" cy="290" r="60" fill="none" stroke="#ACEB02" stroke-width="8"/>
+    <path d="M 300 260 L 315 285 L 342 285 L 322 300 L 330 325 L 300 310 L 270 325 L 278 300 L 258 285 L 285 285 Z" fill="#ACEB02"/>
+  </g>
+</svg>

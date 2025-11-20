@@ -1,0 +1,26 @@
+<svg width="600" height="400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="600" height="400" fill="#f8f9fa"/>
+  <g>
+    <text x="300" y="150" font-family="Arial, sans-serif" font-size="24" fill="#6c757d" text-anchor="middle" font-weight="bold">
+      📊 Data Penjualan Kosong
+    </text>
+    <text x="300" y="200" font-family="Arial, sans-serif" font-size="16" fill="#adb5bd" text-anchor="middle">
+      Belum ada data penjualan untuk ditampilkan
+    </text>
+    <text x="300" y="230" font-family="Arial, sans-serif" font-size="14" fill="#adb5bd" text-anchor="middle">
+      Mulai berjualan untuk melihat grafik penjualan Anda
+    </text>
+  </g>
+  <g opacity="0.3">
+    <line x1="100" y1="300" x2="500" y2="300" stroke="#dee2e6" stroke-width="2"/>
+    <line x1="100" y1="300" x2="100" y2="250" stroke="#ACEB02" stroke-width="3"/>
+    <line x1="150" y1="300" x2="150" y2="270" stroke="#ACEB02" stroke-width="3"/>
+    <line x1="200" y1="300" x2="200" y2="240" stroke="#ACEB02" stroke-width="3"/>
+    <line x1="250" y1="300" x2="250" y2="260" stroke="#ACEB02" stroke-width="3"/>
+    <line x1="300" y1="300" x2="300" y2="230" stroke="#ACEB02" stroke-width="3"/>
+    <line x1="350" y1="300" x2="350" y2="250" stroke="#ACEB02" stroke-width="3"/>
+    <line x1="400" y1="300" x2="400" y2="220" stroke="#ACEB02" stroke-width="3"/>
+    <line x1="450" y1="300" x2="450" y2="240" stroke="#ACEB02" stroke-width="3"/>
+    <line x1="500" y1="300" x2="500" y2="260" stroke="#ACEB02" stroke-width="3"/>
+  </g>
+</svg>

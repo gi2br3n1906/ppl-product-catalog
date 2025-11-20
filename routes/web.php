@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SellerRegistrationController;
+use App\Http\Controllers\DashboardController;
 
 // Halaman utama redirect ke login
 Route::get('/', function () {
@@ -30,6 +31,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/seller/dashboard', function () {
         return view('seller.dashboard');
     })->name('seller.dashboard');
+    
+    // API Endpoints untuk Dashboard
+    Route::prefix('api/dashboard')->name('api.dashboard.')->group(function () {
+        Route::get('/sales', [DashboardController::class, 'getSalesData'])->name('sales');
+        Route::get('/stock', [DashboardController::class, 'getStockData'])->name('stock');
+        Route::get('/rating', [DashboardController::class, 'getRatingData'])->name('rating');
+        Route::get('/location', [DashboardController::class, 'getLocationData'])->name('location');
+        Route::get('/products', [DashboardController::class, 'getProducts'])->name('products');
+        Route::get('/years', [DashboardController::class, 'getYears'])->name('years');
+    });
     
     // Admin: Verifikasi Seller
     Route::prefix('admin')->name('admin.')->group(function () {
