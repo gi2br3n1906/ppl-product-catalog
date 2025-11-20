@@ -5,10 +5,21 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SellerRegistrationController;
 use App\Http\Controllers\DashboardController;
 
-// Halaman utama redirect ke login
+// Halaman utama (Catalog) - Public, semua bisa akses
 Route::get('/', function () {
-    return redirect()->route('login');
-});
+    // Redirect jika sudah login berdasarkan role
+    if (Auth::check()) {
+        $user = Auth::user();
+        if ($user->role === 'admin') {
+            return redirect()->route('admin.seller-registrations.index');
+        } elseif ($user->role === 'seller') {
+            return redirect()->route('seller.dashboard');
+        }
+    }
+    
+    // Jika belum login atau buyer, tampilkan catalog
+    return view('catalog');
+})->name('catalog');
 
 // Route Authentication (Guest only - belum login)
 Route::middleware('guest')->group(function () {
