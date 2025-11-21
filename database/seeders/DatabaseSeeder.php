@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use Database\Seeders\ProductSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -17,9 +18,17 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // Create a test user only if it does not already exist (avoid duplicate seeding)
+        \App\Models\User::updateOrCreate(
+            ['email' => 'test@example.com'],
+            [
+                'name' => 'Test User',
+                // If you want a specific password for the test user in dev, set it here
+                'password' => bcrypt('test1234'),
+            ]
+        );
+
+        // Seed demo products
+        $this->call(ProductSeeder::class);
     }
 }

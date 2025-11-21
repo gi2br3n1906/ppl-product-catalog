@@ -181,6 +181,9 @@
 
         <form action="{{ route('login') }}" method="POST">
             @csrf
+            @if(!empty($redirectTo))
+                <input type="hidden" name="redirect" value="{{ $redirectTo }}">
+            @endif
             
             <div class="form-group">
                 <label for="email">Email</label>
