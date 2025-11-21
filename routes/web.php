@@ -4,22 +4,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SellerRegistrationController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CartController;
 
 // Halaman utama (Catalog) - Public, semua bisa akses
-Route::get('/', function () {
-    // Redirect jika sudah login berdasarkan role
-    if (Auth::check()) {
-        $user = Auth::user();
-        if ($user->role === 'admin') {
-            return redirect()->route('admin.seller-registrations.index');
-        } elseif ($user->role === 'seller') {
-            return redirect()->route('seller.dashboard');
-        }
-    }
-    
-    // Jika belum login atau buyer, tampilkan catalog
-    return view('catalog');
-})->name('catalog');
+Route::get('/', [ProductController::class, 'index'])->name('catalog');
+Route::get('/product/{product}', [ProductController::class, 'show'])->name('product.show');
 
 // Route Authentication (Guest only - belum login)
 Route::middleware('guest')->group(function () {
@@ -37,6 +27,9 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    
+    // Add to Cart (requires auth - Login to buy)
+    Route::post('/cart/add', [CartController::class, 'store'])->name('cart.add');
     
     // Seller Dashboard
     Route::get('/seller/dashboard', function () {

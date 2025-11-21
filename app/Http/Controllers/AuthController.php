@@ -15,7 +15,10 @@ class AuthController extends Controller
      */
     public function showLoginForm()
     {
-        return view('auth.login');
+        // If there is a redirect query parameter, forward it to the view
+        return view('auth.login', [
+            'redirectTo' => request()->query('redirect')
+        ]);
     }
 
     /**
@@ -37,9 +40,17 @@ class AuthController extends Controller
             $user = Auth::user();
             if ($user->role === 'admin') {
                 return redirect()->route('admin.seller-registrations.index');
-            } else {
-                return redirect()->route('seller.dashboard');
             }
+
+            // If a redirect param exists (from guest 'buy' flow), redirect there.
+            if ($request->filled('redirect')) {
+                // basic safety: allow only internal redirects by using url()->to()
+                $redirectTo = $request->input('redirect');
+                return redirect()->to($redirectTo);
+            }
+
+            // Default for non-admin: redirect to intended or seller dashboard
+            return redirect()->intended(route('seller.dashboard'));
         }
 
         return back()->withErrors([

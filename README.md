@@ -105,6 +105,17 @@ CampusMarket adalah platform marketplace yang memungkinkan seller untuk mendafta
    
    Akses aplikasi di: `http://127.0.0.1:8000`
 
+### Menambahkan Produk demo (optional)
+Jika ingin mengisi katalog dengan sample data:
+
+```bash
+php artisan migrate
+php artisan db:seed
+php artisan storage:link
+```
+
+Perintah di atas akan membuat migrasi, memasukkan sample data (Product seeder) dan membuat symbolic link ke `public/storage` sehingga gambar produk dapat diakses.
+
 ## 👤 Default Credentials
 
 **Admin:**
