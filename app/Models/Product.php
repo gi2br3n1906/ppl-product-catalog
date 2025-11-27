@@ -26,4 +26,12 @@ class Product extends Model
     {
         return $this->belongsTo(User::class, 'seller_id');
     }
+
+    /**
+     * Relasi ke ProductImage (semua gambar produk)
+     */
+    public function images()
+    {
+        return $this->hasMany(ProductImage::class);
+    }
 }

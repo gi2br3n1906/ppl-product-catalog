@@ -394,12 +394,12 @@
                 <h1>Dashboard Overview</h1>
                 <p>Selamat datang kembali, {{ Auth::user()->name }}. Berikut adalah ringkasan performa toko Anda.</p>
             </div>
-            <a href="#" class="btn-primary">
+            <a href="{{ route('seller.kelola-produk') }}" class="btn-primary">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <rect x="3" y="7" width="18" height="13" rx="2" ry="2"></rect>
+                    <path d="M16 3v4M8 3v4M3 11h18"></path>
                 </svg>
-                Tambah Produk
+                Kelola Produk
             </a>
         </div>
 
@@ -975,7 +975,7 @@
                                     <span class="product-name" style="color: #1f2937;">${product.name}</span>
                                     <span class="product-stat" style="color: #DC2626; font-weight: 600;">Sisa: ${product.stock} unit</span>
                                 </div>
-                                <a href="#" style="font-size: 12px; color: #01343B; text-decoration: none; font-weight: 600; background: #f3f4f6; padding: 4px 8px; border-radius: 4px;">Restock</a>
+                                <a href="{{ route('seller.kelola-produk') }}" style="font-size: 12px; color: #01343B; text-decoration: none; font-weight: 600; background: #f3f4f6; padding: 4px 8px; border-radius: 4px;">Kelola Produk</a>
                             </div>
                         `;
                         listContainer.insertAdjacentHTML('beforeend', itemHtml);

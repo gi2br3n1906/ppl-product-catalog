@@ -19,7 +19,6 @@ return new class extends Migration
             $table->integer('stock')->default(0);
             $table->unsignedBigInteger('seller_id')->nullable();
             $table->string('category')->nullable();
-            $table->string('image')->nullable();
             $table->timestamps();
 
             $table->foreign('seller_id')->references('id')->on('users')->onDelete('set null');

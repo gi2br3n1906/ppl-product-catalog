@@ -35,7 +35,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/seller/dashboard', function () {
         return view('seller.dashboard');
     })->name('seller.dashboard');
+
+    // Seller: Kelola Produk (Halaman & Simpan Baru)
+    Route::get('/seller/kelola-produk', [ProductController::class, 'kelolaProduk'])->name('seller.kelola-produk');
+    Route::post('/seller/kelola-produk', [ProductController::class, 'storeProduk'])->name('seller.kelola-produk.store'); // Note: name saya perjelas agar unik
     
+    // Seller: Kelola Produk (Update & Delete Produk)
+    Route::put('/seller/kelola-produk/{id}', [ProductController::class, 'updateProduk'])->name('seller.produk.update');
+    Route::delete('/seller/kelola-produk/{id}', [ProductController::class, 'destroyProduk'])->name('seller.produk.destroy');
+
+    // Seller: Hapus Satu Gambar Spesifik (Fitur Baru)
+    Route::delete('/seller/image/{id}', [ProductController::class, 'deleteImage'])->name('seller.image.delete');
+
     // API Endpoints untuk Dashboard
     Route::prefix('api/dashboard')->name('api.dashboard.')->group(function () {
         Route::get('/sales', [DashboardController::class, 'getSalesData'])->name('sales');

@@ -277,13 +277,11 @@
                 @forelse($products as $product)
                     <div class="product-card" style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e9e9e9;">
                         <div class="product-image-wrapper">
-                            @if(!empty($product->image))
-                                @php
-                                    $imgSrc = $product->image;
-                                    if ($imgSrc && !str_starts_with($imgSrc, 'http')) {
-                                        $imgSrc = asset('storage/' . ltrim($imgSrc, '/'));
-                                    }
-                                @endphp
+                            @php
+                                $primaryImage = isset($product->images) ? collect($product->images)->where('is_primary', true)->first() : null;
+                                $imgSrc = $primaryImage ? asset('storage/' . $primaryImage->image_path) : null;
+                            @endphp
+                            @if($imgSrc)
                                 <img src="{{ $imgSrc }}" alt="{{ $product->name }}">
                             @else
                                 <!-- inline SVG placeholder -->
