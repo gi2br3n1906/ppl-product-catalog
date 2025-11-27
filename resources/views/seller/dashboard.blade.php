@@ -16,22 +16,14 @@
             box-sizing: border-box;
         }
         
-        html, body {
-            -ms-overflow-style: none;  
-            scrollbar-width: none;  
-        }
-        
-        html::-webkit-scrollbar,
-        body::-webkit-scrollbar {
-            display: none;  
-        }
-        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f5f5;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background-color: #f9fafb;
+            color: #1f2937;
             min-height: 100vh;
         }
         
+        /* Navbar */
         .navbar {
             background: #01343B;
             padding: 20px 40px;
@@ -40,12 +32,18 @@
             align-items: center;
             border-bottom: 3px solid #ACEB02;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
         
         .navbar-brand {
             font-size: 20px;
             font-weight: 600;
             color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .btn-logout {
@@ -56,432 +54,326 @@
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
+            font-size: 14px;
             transition: all 0.2s;
         }
         
         .btn-logout:hover {
             background: white;
             color: #01343B;
+            border-color: white;
         }
         
         .container {
-            max-width: 1400px;
+            max-width: 1280px;
             margin: 0 auto;
-            padding: 30px 20px;
+            padding: 32px 24px;
         }
         
-        .welcome-message {
-            margin-bottom: 30px;
-            background: white;
-            padding: 25px 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        /* Welcome Section */
+        .welcome-header {
+            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 24px;
+            flex-wrap: wrap;
         }
         
-        .welcome-message h1 {
-            color: #01343B;
-            font-size: 28px;
+        .welcome-text {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .welcome-text h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #111827;
             margin-bottom: 8px;
         }
         
-        .welcome-message p {
-            color: #666;
-            font-size: 15px;
-        }
-        
-        /* Dashboard Layout - 2 Kolom */
-        .dashboard-layout {
-            display: grid;
-            grid-template-columns: 250px 1fr;
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-        
-        /* Navigasi Tombol (Kolom Kiri) */
-        .chart-navigation {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            height: fit-content;
-        }
-        
-        .chart-navigation h3 {
-            color: #01343B;
-            font-size: 16px;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-        
-        .nav-button {
-            width: 100%;
-            padding: 12px 15px;
-            margin-bottom: 10px;
-            background: #f8f9fa;
-            border: 2px solid #e1e1e1;
-            border-radius: 6px;
-            color: #495057;
+        .welcome-text p {
+            color: #6b7280;
             font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-align: left;
+        }
+
+        .btn-primary {
+            background-color: #01343B;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            border: none;
+            box-shadow: 0 2px 4px rgba(1, 52, 59, 0.2);
+            white-space: nowrap;
+        }
+
+        .btn-primary:hover {
+            background-color: #024c55;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(1, 52, 59, 0.3);
+        }
+
+        /* Stats Grid (Top) */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .stat-value {
+            color: #111827;
+            font-size: 30px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        
+        .stat-trend {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 4px;
+            margin-top: 8px;
+            font-size: 12px;
+            font-weight: 500;
         }
         
-        .nav-button:hover {
-            background: #e9ecef;
-            border-color: #ACEB02;
+        .stat-trend.positive { color: #059669; }
+        .stat-trend.neutral { color: #6b7280; }
+
+        /* Main Layout Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 24px;
         }
-        
-        .nav-button.active {
-            background: #01343B;
-            border-color: #01343B;
-            color: white;
-            font-weight: 600;
-        }
-        
-        .nav-button-icon {
-            font-size: 18px;
-        }
-        
-        /* Area Grafik (Kolom Kanan) */
-        .chart-area {
+
+        /* Chart Section */
+        .chart-card {
             background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            min-height: 450px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            padding: 24px;
+            min-height: 500px;
+            min-width: 0; /* PENTING: Mencegah grid blowout */
         }
-        
-        .chart-header {
+
+        .chart-header-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #f1f1f1;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
         }
-        
-        .chart-header h3 {
-            color: #01343B;
-            font-size: 18px;
-            font-weight: 600;
-            margin: 0;
-        }
-        
-        .year-selector {
-            display: none;
-            align-items: center;
-            gap: 20px;
-        }
-        
-        .year-selector.active {
+
+        .chart-tabs {
             display: flex;
+            background: #f3f4f6;
+            padding: 4px;
+            border-radius: 8px;
         }
-        
-        .year-selector label {
-            color: #495057;
-            font-size: 14px;
-            font-weight: 500;
-            margin-right: 10px;
-        }
-        
-        .year-selector select {
-            padding: 8px 30px 8px 12px;
-            border: 2px solid #e1e1e1;
-            border-radius: 6px;
-            background: white;
-            color: #495057;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23495057' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 10px center;
-        }
-        
-        .year-selector select:hover {
-            border-color: #ACEB02;
-        }
-        
-        .year-selector select:focus {
-            outline: none;
-            border-color: #01343B;
-        }
-        
-        .total-sales {
+
+        .chart-tab {
             padding: 8px 16px;
-            background: linear-gradient(135deg, #01343B 0%, #024950 100%);
-            border-radius: 6px;
-            color: white;
+            border: none;
+            background: transparent;
+            color: #6b7280;
+            font-size: 13px;
             font-weight: 600;
-            font-size: 14px;
-            border: 2px solid #ACEB02;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .total-sales-label {
-            font-size: 11px;
-            opacity: 0.9;
-            margin-right: 8px;
-        }
-        
-        .total-sales-value {
-            font-size: 16px;
-            color: #ACEB02;
-        }
-        
-        .product-selector {
-            display: none;
-        }
-        
-        .product-selector.active {
-            display: block;
-        }
-        
-        .product-selector label {
-            color: #495057;
-            font-size: 14px;
-            font-weight: 500;
-            margin-right: 10px;
-        }
-        
-        .product-selector select {
-            padding: 8px 30px 8px 12px;
-            border: 2px solid #e1e1e1;
-            border-radius: 6px;
-            background: white;
-            color: #495057;
-            font-size: 14px;
             cursor: pointer;
-            transition: all 0.3s;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23495057' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 10px center;
+            border-radius: 6px;
+            transition: all 0.2s;
         }
-        
-        .product-selector select:hover {
-            border-color: #ACEB02;
+
+        .chart-tab.active {
+            background: white;
+            color: #111827;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
-        
-        .product-selector select:focus {
+
+        .chart-controls {
+            display: flex;
+            gap: 12px;
+        }
+
+        select {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            background-color: white;
+            color: #374151;
+            font-size: 13px;
+            cursor: pointer;
             outline: none;
-            border-color: #01343B;
         }
         
-        .chart-container {
+        select:focus {
+            border-color: #01343B;
+            ring: 2px solid rgba(1, 52, 59, 0.1);
+        }
+
+        /* Best Sellers Section */
+        .best-sellers-card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            padding: 24px;
+            height: fit-content;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 20px;
+        }
+
+        .product-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .product-item:last-child {
+            border-bottom: none;
+        }
+
+        .rank-badge {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #f3f4f6;
+            color: #6b7280;
+            font-size: 12px;
+            font-weight: 700;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 350px;
+            margin-right: 12px;
         }
         
-        #dynamicChart {
-            max-height: 400px;
+        .rank-badge.top-1 { background: #FEF3C7; color: #D97706; }
+        .rank-badge.top-2 { background: #E5E7EB; color: #374151; }
+        .rank-badge.top-3 { background: #FFEDD5; color: #C2410C; }
+
+        .product-details {
+            flex: 1;
+        }
+
+        .product-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .product-stat {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        /* Loading & Chart Area */
+        .chart-canvas-container {
+            position: relative;
+            height: 400px;
             width: 100%;
-            display: none;
+            min-width: 0; /* PENTING: Mencegah overflow */
         }
-        
-        #dummyChartImage {
-            max-width: 600px;
-            width: 100%;
-            height: auto;
-            display: none;
+
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 12px;
         }
-        
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
         .loading-state {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             text-align: center;
-            color: #6c757d;
+            color: #6b7280;
+            width: 100%;
+            z-index: 10;
         }
         
-        .loading-state .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #ACEB02;
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #01343B;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 30px;
+            height: 30px;
             animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
+            margin: 0 auto 10px;
         }
-        
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        
-        /* Ringkasan Kinerja (Bawah) */
-        .summary-section {
-            background: white;
-            padding: 25px 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            margin-bottom: 25px;
-        }
-        
-        .summary-section h2 {
-            color: #01343B;
-            font-size: 20px;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-        
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-        }
-        
-        .summary-card {
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 6px;
-            border-left: 4px solid #ACEB02;
-        }
-        
-        .summary-card h3 {
-            color: #6c757d;
-            font-size: 13px;
-            font-weight: 500;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-        }
-        
-        .summary-card .value {
-            color: #01343B;
-            font-size: 28px;
-            font-weight: 700;
-        }
-        
+
         /* Responsive */
-        @media (max-width: 768px) {
-            .navbar {
-                padding: 15px 20px;
-            }
-            
-            .navbar-brand {
-                font-size: 16px;
-            }
-            
-            .container {
-                padding: 20px 15px;
-            }
-            
-            .welcome-message {
-                padding: 20px;
-                margin-bottom: 20px;
-            }
-            
-            .welcome-message h1 {
-                font-size: 22px;
-            }
-            
-            .welcome-message p {
-                font-size: 14px;
-            }
-            
-            .dashboard-layout {
+        @media (max-width: 1024px) {
+            .main-grid {
                 grid-template-columns: 1fr;
-                gap: 20px;
             }
             
-            .chart-navigation {
-                display: flex;
-                gap: 10px;
-                overflow-x: auto;
-                padding: 15px;
-                -webkit-overflow-scrolling: touch;
-            }
-            
-            .chart-navigation::-webkit-scrollbar {
-                display: none;
-            }
-            
-            .chart-navigation h3 {
-                display: none;
-            }
-            
-            .nav-button {
-                white-space: nowrap;
-                margin-bottom: 0;
-                font-size: 13px;
-                padding: 10px 12px;
-            }
-            
-            .chart-area {
-                padding: 20px 15px;
-            }
-            
-            .chart-header {
+            .chart-header-row {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 15px;
             }
             
-            .chart-header h3 {
-                font-size: 16px;
-            }
-            
-            .year-selector,
-            .product-selector {
+            .chart-tabs {
                 width: 100%;
+                overflow-x: auto;
             }
             
-            .year-selector.active,
-            .product-selector.active {
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
-                width: 100%;
-            }
-            
-            .year-selector > div:first-child {
-                width: 100%;
-            }
-            
-            .year-selector select,
-            .product-selector select {
-                width: 100%;
-                font-size: 13px;
-            }
-            
-            .total-sales {
-                width: 100%;
-                text-align: center;
-                padding: 10px 16px;
-            }
-            
-            .chart-container {
-                min-height: 300px;
-            }
-            
-            #dynamicChart {
-                max-height: 300px;
-            }
-            
-            .summary-section {
-                padding: 20px;
-            }
-            
-            .summary-section h2 {
-                font-size: 18px;
-            }
-            
-            .summary-grid {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-            
-            .summary-card {
-                padding: 15px;
-            }
-            
-            .summary-card .value {
-                font-size: 24px;
+            .chart-tab {
+                white-space: nowrap;
             }
         }
     </style>
@@ -496,105 +388,149 @@
     </nav>
 
     <div class="container">
-        <div class="welcome-message">
-            <h1>Selamat Datang, {{ Auth::user()->name }}!</h1>
-            <p>Semua Data Masih Bersifat Dummy, Tunggu Pengembangan Selanjutnya untuk implementasi nyatanya😘</p>
+        <!-- Welcome Header -->
+        <div class="welcome-header">
+            <div class="welcome-text">
+                <h1>Dashboard Overview</h1>
+                <p>Selamat datang kembali, {{ Auth::user()->name }}. Berikut adalah ringkasan performa toko Anda.</p>
+            </div>
+            <a href="#" class="btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Tambah Produk
+            </a>
         </div>
 
-        <!-- Dashboard Layout 2 Kolom -->
-        <div class="dashboard-layout">
-            <!-- Navigasi Tombol (Kiri) -->
-            <div class="chart-navigation">
-                <h3>📊 Pilih Grafik</h3>
-                <button class="nav-button active" data-chart="sales">
-                    <span class="nav-button-icon">💰</span>
-                    <span>Total Penjualan</span>
-                </button>
-                <button class="nav-button" data-chart="stock">
-                    <span class="nav-button-icon">📦</span>
-                    <span>Sebaran Stok</span>
-                </button>
-                <button class="nav-button" data-chart="rating">
-                    <span class="nav-button-icon">⭐</span>
-                    <span>Nilai Rating</span>
-                </button>
-                <button class="nav-button" data-chart="location">
-                    <span class="nav-button-icon">📍</span>
-                    <span>Lokasi Pemberi Rating</span>
-                </button>
+        <!-- Top Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Penjualan (Bulan Ini)</div>
+                <div class="stat-value">Rp 8.500.000</div>
+                <div class="stat-trend positive">
+                    <span>↗ 12%</span> dari bulan lalu
+                </div>
             </div>
+            <div class="stat-card">
+                <div class="stat-label">Produk Terjual</div>
+                <div class="stat-value">142</div>
+                <div class="stat-trend positive">
+                    <span>↗ 5%</span> dari bulan lalu
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Pesanan Pending</div>
+                <div class="stat-value">8</div>
+                <div class="stat-trend neutral">
+                    <span>-</span> Perlu diproses
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Rating Toko</div>
+                <div class="stat-value">4.8</div>
+                <div class="stat-trend positive">
+                    <span>★</span> Dari 5.0
+                </div>
+            </div>
+        </div>
 
-            <!-- Area Grafik (Kanan) -->
-            <div class="chart-area">
-                <div class="chart-header">
-                    <h3 id="chartTitle">Total Penjualan Bulanan</h3>
-                    <div class="year-selector" id="yearSelector">
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <label for="yearSelect">Tahun:</label>
-                            <select id="yearSelect">
+        <!-- Main Content Grid -->
+        <div class="main-grid">
+            <!-- Left: Chart Section -->
+            <div class="chart-card">
+                <div class="chart-header-row">
+                    <div class="chart-tabs">
+                        <button class="chart-tab active" data-chart="sales">Penjualan</button>
+                        <button class="chart-tab" data-chart="stock">Stok</button>
+                        <button class="chart-tab" data-chart="rating">Rating</button>
+                        <button class="chart-tab" data-chart="location">Lokasi</button>
+                    </div>
+                    
+                    <div class="chart-controls">
+                        <div id="yearSelector" class="selector-group">
+                            <select id="yearSelect"></select>
+                        </div>
+                        <div id="productSelector" class="selector-group" style="display: none;">
+                            <select id="productSelect">
+                                <option value="">Semua Produk</option>
                             </select>
                         </div>
-                        <div class="total-sales" id="totalSales">
-                            <span class="total-sales-label">Total:</span>
-                            <span class="total-sales-value">Rp 0</span>
-                        </div>
-                    </div>
-                    <div class="product-selector" id="productSelector">
-                        <label for="productSelect">Pilih Produk:</label>
-                        <select id="productSelect">
-                            <option value="">Semua Produk</option>
-                        </select>
                     </div>
                 </div>
-                <div class="chart-container">
+
+                <div class="chart-canvas-container">
                     <div class="loading-state">
                         <div class="spinner"></div>
                         <p>Memuat data...</p>
                     </div>
-                    <canvas id="dynamicChart"></canvas>
-                    <img id="dummyChartImage" alt="Chart Placeholder">
+                    
+                    <!-- Wrapper untuk scroll -->
+                    <div id="chartScrollContainer" class="custom-scrollbar" style="width: 100%; height: 100%; overflow-x: auto; overflow-y: hidden; display: none;">
+                        <div id="chartWidthContainer" style="height: 100%; position: relative;">
+                            <canvas id="dynamicChart"></canvas>
+                        </div>
+                    </div>
+
+                    <img id="dummyChartImage" alt="Chart Placeholder" style="display: none; max-width: 100%; max-height: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                </div>
+                
+                <!-- Total Sales Display for Sales Chart -->
+                <div id="totalSalesDisplay" style="margin-top: 20px; text-align: center; display: none;">
+                    <span style="color: #6b7280; font-size: 14px;">Total Tahun Ini:</span>
+                    <span class="total-value" style="font-weight: 700; color: #01343B; font-size: 18px;">Rp 0</span>
                 </div>
             </div>
-        </div>
 
-        <!-- Ringkasan Kinerja -->
-        <div class="summary-section">
-            <h2>📈 Ringkasan Kinerja</h2>
-            <div class="summary-grid">
-                <div class="summary-card">
-                    <h3>Total Penjualan Bulan Ini</h3>
-                    <div class="value">Rp 8.5jt</div>
+            <!-- Right: Best Sellers & Low Stock -->
+            <div class="right-column">
+                <!-- Best Sellers -->
+                <div class="best-sellers-card">
+                    <h3 class="card-title">Produk Terlaris 🔥</h3>
+                    <div class="product-list">
+                        <div class="product-item">
+                            <div class="rank-badge top-1">1</div>
+                            <div class="product-details">
+                                <span class="product-name">Buku Tulis Spiral A5</span>
+                                <span class="product-stat">89 terjual</span>
+                            </div>
+                        </div>
+                        <div class="product-item">
+                            <div class="rank-badge top-2">2</div>
+                            <div class="product-details">
+                                <span class="product-name">Pulpen Hitam 0.5mm</span>
+                                <span class="product-stat">76 terjual</span>
+                            </div>
+                        </div>
+                        <div class="product-item">
+                            <div class="rank-badge top-3">3</div>
+                            <div class="product-details">
+                                <span class="product-name">Pensil 2B (Pack 12)</span>
+                                <span class="product-stat">52 terjual</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="summary-card" style="border-left-color: #01343B;">
-                    <h3>Produk Terjual</h3>
-                    <div class="value">142</div>
-                </div>
-                <div class="summary-card" style="border-left-color: #ff6b6b;">
-                    <h3>Pesanan Pending</h3>
-                    <div class="value">8</div>
-                </div>
-                <div class="summary-card" style="border-left-color: #ffd93d;">
-                    <h3>Rating Rata-rata</h3>
-                    <div class="value">4.6</div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Produk Terlaris -->
-        <div class="summary-section">
-            <h2>🔥 Produk Terlaris</h2>
-            <div class="summary-grid">
-                <div class="summary-card">
-                    <h3>Buku Tulis Spiral A5</h3>
-                    <div class="value">89 terjual</div>
-                </div>
-                <div class="summary-card">
-                    <h3>Pulpen Hitam 0.5mm</h3>
-                    <div class="value">76 terjual</div>
-                </div>
-                <div class="summary-card">
-                    <h3>Pensil 2B (Pack 12)</h3>
-                    <div class="value">52 terjual</div>
+                <!-- Low Stock Alert -->
+                <div class="low-stock-card" style="margin-top: 24px; background: white; border-radius: 12px; border: 1px solid #e5e7eb; padding: 24px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                    <h3 class="card-title" style="color: #DC2626; display: flex; align-items: center; gap: 8px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                        Stok Menipis
+                    </h3>
+                    <div id="lowStockList" class="product-list">
+                        <!-- Content will be loaded via JS -->
+                        <div class="loading-state-small" style="text-align: center; padding: 20px; color: #6b7280;">
+                            Memuat data...
+                        </div>
+                    </div>
+                    <div id="safeStockState" style="display: none; text-align: center; padding: 20px;">
+                        <div style="background: #ECFDF5; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                        </div>
+                        <h4 style="font-weight: 600; color: #059669; margin-bottom: 4px;">Aman Terkendali!</h4>
+                        <p style="font-size: 13px; color: #6b7280;">Stok Anda terpantau aman.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -607,14 +543,6 @@
         let productsData = [];
         let yearsData = [];
         let currentYear = new Date().getFullYear();
-        
-        // Mapping chart type ke title
-        const chartTitles = {
-            sales: 'Total Penjualan Bulanan',
-            stock: 'Sebaran Jumlah Stok Produk',
-            rating: 'Sebaran Nilai Rating Produk',
-            location: 'Sebaran Lokasi Pemberi Rating'
-        };
         
         // Konfigurasi chart berdasarkan tipe
         const chartConfigs = {
@@ -660,9 +588,11 @@
          */
         function renderChart(chartType, labels, data, hasData, dummyImageUrl, total = null) {
             const canvas = document.getElementById('dynamicChart');
+            const scrollContainer = document.getElementById('chartScrollContainer');
+            const widthContainer = document.getElementById('chartWidthContainer');
             const dummyImage = document.getElementById('dummyChartImage');
             const loadingState = document.querySelector('.loading-state');
-            const totalSalesElement = document.getElementById('totalSales');
+            const totalSalesDisplay = document.getElementById('totalSalesDisplay');
             
             // Update total penjualan jika ada
             if (chartType === 'sales' && total !== null) {
@@ -672,7 +602,11 @@
                     minimumFractionDigits: 0,
                     maximumFractionDigits: 0
                 }).format(total);
-                totalSalesElement.querySelector('.total-sales-value').textContent = formattedTotal;
+                
+                totalSalesDisplay.style.display = 'block';
+                totalSalesDisplay.querySelector('.total-value').textContent = formattedTotal;
+            } else {
+                totalSalesDisplay.style.display = 'none';
             }
             
             // Sembunyikan loading
@@ -685,11 +619,64 @@
             }
             
             if (hasData) {
-                // Tampilkan canvas, sembunyikan dummy image
+                // Tampilkan container chart
+                scrollContainer.style.display = 'block';
                 canvas.style.display = 'block';
                 dummyImage.style.display = 'none';
                 
+                // Reset styles
+                scrollContainer.style.overflowX = 'hidden';
+                widthContainer.style.width = '100%';
+                
+                // Logika Scroll Horizontal
+                if (chartType === 'stock' || chartType === 'rating') {
+                    const totalItems = labels.length;
+                    // Ubah itemsPerView jadi 12 (mirip chart penjualan yg 12 bulan)
+                    const itemsPerView = 12; 
+                    
+                    if (totalItems > itemsPerView) {
+                        // Aktifkan scroll
+                        scrollContainer.style.overflowX = 'auto';
+                        
+                        // Hitung lebar container
+                        // Gunakan getBoundingClientRect untuk akurasi lebih tinggi
+                        const visibleWidth = scrollContainer.parentElement.getBoundingClientRect().width;
+                        
+                        if (visibleWidth > 0) {
+                            // Hitung lebar total yang dibutuhkan
+                            // Kita kecilkan minItemWidth jadi 80px (sebelumnya 150px terlalu lebar)
+                            const minItemWidth = 80; 
+                            const calculatedWidth = (totalItems / itemsPerView) * visibleWidth;
+                            const minTotalWidth = totalItems * minItemWidth;
+                            
+                            // Gunakan yang lebih besar agar tidak terlalu sempit
+                            // Tapi prioritas tetap proporsional view jika memungkinkan
+                            const finalWidth = Math.max(calculatedWidth, minTotalWidth);
+                            
+                            widthContainer.style.width = `${finalWidth}px`;
+                        } else {
+                            // Fallback jika width tidak terdeteksi
+                            widthContainer.style.width = `${totalItems * 80}px`;
+                        }
+                    } else {
+                        widthContainer.style.width = '100%';
+                        scrollContainer.style.overflowX = 'hidden';
+                    }
+                } else {
+                    widthContainer.style.width = '100%';
+                    scrollContainer.style.overflowX = 'hidden';
+                }
+                
                 const config = chartConfigs[chartType];
+                
+                // Custom Color Logic untuk Stock < 8
+                let datasetBackgroundColor = config.backgroundColor;
+                let datasetBorderColor = config.borderColor;
+
+                if (chartType === 'stock') {
+                    datasetBackgroundColor = data.map(val => val < 8 ? 'rgba(220, 53, 69, 0.8)' : config.backgroundColor);
+                    datasetBorderColor = data.map(val => val < 8 ? 'rgba(220, 53, 69, 1)' : config.borderColor);
+                }
                 
                 // Konfigurasi Chart.js
                 const chartConfig = {
@@ -699,28 +686,22 @@
                         datasets: [{
                             label: config.title,
                             data: data,
-                            backgroundColor: config.backgroundColor,
-                            borderColor: config.borderColor,
+                            backgroundColor: datasetBackgroundColor,
+                            borderColor: datasetBorderColor,
                             borderWidth: 2,
                             tension: 0.4
                         }]
                     },
                     options: {
                         responsive: true,
-                        maintainAspectRatio: true,
+                        maintainAspectRatio: false,
                         plugins: {
                             legend: {
                                 display: config.type === 'doughnut',
                                 position: 'bottom'
                             },
                             title: {
-                                display: true,
-                                text: config.title,
-                                font: {
-                                    size: 18,
-                                    weight: 'bold'
-                                },
-                                color: '#01343B'
+                                display: false
                             }
                         }
                     }
@@ -743,6 +724,7 @@
                 myChart = new Chart(canvas, chartConfig);
             } else {
                 // Tampilkan dummy image, sembunyikan canvas
+                scrollContainer.style.display = 'none';
                 canvas.style.display = 'none';
                 dummyImage.style.display = 'block';
                 dummyImage.src = dummyImageUrl;
@@ -756,30 +738,30 @@
             currentChartType = chartType;
             
             const canvas = document.getElementById('dynamicChart');
+            const scrollContainer = document.getElementById('chartScrollContainer');
             const dummyImage = document.getElementById('dummyChartImage');
             const loadingState = document.querySelector('.loading-state');
-            const chartTitle = document.getElementById('chartTitle');
             const productSelector = document.getElementById('productSelector');
             const yearSelector = document.getElementById('yearSelector');
-            
-            // Update title
-            chartTitle.textContent = chartTitles[chartType];
+            const totalSalesDisplay = document.getElementById('totalSalesDisplay');
             
             // Show/hide selectors berdasarkan chart type
             if (chartType === 'sales') {
-                yearSelector.classList.add('active');
-                productSelector.classList.remove('active');
+                yearSelector.style.display = 'block';
+                productSelector.style.display = 'none';
             } else if (chartType === 'location') {
-                productSelector.classList.add('active');
-                yearSelector.classList.remove('active');
+                productSelector.style.display = 'block';
+                yearSelector.style.display = 'none';
             } else {
-                productSelector.classList.remove('active');
-                yearSelector.classList.remove('active');
+                productSelector.style.display = 'none';
+                yearSelector.style.display = 'none';
             }
             
             // Tampilkan loading
+            if (scrollContainer) scrollContainer.style.display = 'none';
             canvas.style.display = 'none';
             dummyImage.style.display = 'none';
+            totalSalesDisplay.style.display = 'none';
             loadingState.style.display = 'block';
             
             let apiUrl = `/api/dashboard/${chartType}`;
@@ -904,7 +886,7 @@
          * Event listener untuk tombol navigasi
          */
         document.addEventListener('DOMContentLoaded', function() {
-            const navButtons = document.querySelectorAll('.nav-button');
+            const chartTabs = document.querySelectorAll('.chart-tab');
             const productSelect = document.getElementById('productSelect');
             const yearSelect = document.getElementById('yearSelect');
             
@@ -912,10 +894,10 @@
             loadProducts();
             loadYears();
             
-            navButtons.forEach(button => {
-                button.addEventListener('click', function() {
+            chartTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
                     // Hapus class active dari semua tombol
-                    navButtons.forEach(btn => btn.classList.remove('active'));
+                    chartTabs.forEach(t => t.classList.remove('active'));
                     
                     // Tambahkan class active ke tombol yang diklik
                     this.classList.add('active');
@@ -959,8 +941,55 @@
             // Tunggu sebentar untuk memastikan dropdown tahun sudah terisi
             setTimeout(() => {
                 loadChartData('sales', null, currentYear);
+                loadLowStockProducts(); // Load data stok menipis
             }, 100);
         });
+
+        /**
+         * Fungsi untuk load produk stok menipis
+         */
+        function loadLowStockProducts() {
+            const listContainer = document.getElementById('lowStockList');
+            const safeState = document.getElementById('safeStockState');
+            
+            fetch('/api/dashboard/low-stock', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const products = data.products;
+                listContainer.innerHTML = ''; // Clear loading state
+                
+                if (products.length > 0) {
+                    safeState.style.display = 'none';
+                    listContainer.style.display = 'block';
+                    
+                    products.forEach(product => {
+                        const itemHtml = `
+                            <div class="product-item" style="border-left: 3px solid #DC2626; padding-left: 12px;">
+                                <div class="product-details">
+                                    <span class="product-name" style="color: #1f2937;">${product.name}</span>
+                                    <span class="product-stat" style="color: #DC2626; font-weight: 600;">Sisa: ${product.stock} unit</span>
+                                </div>
+                                <a href="#" style="font-size: 12px; color: #01343B; text-decoration: none; font-weight: 600; background: #f3f4f6; padding: 4px 8px; border-radius: 4px;">Restock</a>
+                            </div>
+                        `;
+                        listContainer.insertAdjacentHTML('beforeend', itemHtml);
+                    });
+                } else {
+                    listContainer.style.display = 'none';
+                    safeState.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching low stock products:', error);
+                listContainer.innerHTML = '<p style="text-align: center; color: #DC2626;">Gagal memuat data.</p>';
+            });
+        }
     </script>
 </body>
 </html>

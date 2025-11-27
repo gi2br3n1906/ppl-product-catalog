@@ -44,6 +44,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/location', [DashboardController::class, 'getLocationData'])->name('location');
         Route::get('/products', [DashboardController::class, 'getProducts'])->name('products');
         Route::get('/years', [DashboardController::class, 'getYears'])->name('years');
+        Route::get('/low-stock', [DashboardController::class, 'getLowStockProducts'])->name('low-stock');
     });
     
     // Admin: Verifikasi Seller
