@@ -231,12 +231,28 @@
         <div class="product-detail-card">
             <div class="product-image-container">
                 @php
-                    $imgSrc = $product->image;
-                    if ($imgSrc && !str_starts_with($imgSrc, 'http')) {
-                        $imgSrc = asset('storage/' . ltrim($imgSrc, '/'));
+                    $allImages = isset($product->images) ? collect($product->images) : collect();
+                    if ($allImages->count() === 0 && $product->image) {
+                        $allImages = collect([(object)[
+                            'image_path' => $product->image,
+                            'is_primary' => true
+                        ]]);
                     }
                 @endphp
-                <img src="{{ $imgSrc }}" alt="{{ $product->name }}" class="product-image">
+                <div id="mainImageContainer" style="width:100%; height:320px; display:flex; align-items:center; justify-content:center; background:#f0f0f0; border-radius:6px; position:relative; overflow:hidden;">
+                    @if($allImages->count() > 0)
+                        <img id="mainProductImage" src="{{ asset('storage/' . ltrim($allImages->first()->image_path, '/')) }}" alt="{{ $product->name }}" class="product-image" style="max-height:100%; max-width:100%; object-fit:contain;">
+                    @else
+                        <div style="color:#999; font-weight:600;">Gambar Produk</div>
+                    @endif
+                </div>
+                @if($allImages->count() > 1)
+                    <div style="display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; justify-content:center;">
+                        @foreach($allImages as $img)
+                            <img src="{{ asset('storage/' . ltrim($img->image_path, '/')) }}" alt="Gambar {{ $product->name }}" class="thumb-img" style="width:70px; height:70px; object-fit:cover; border-radius:6px; border:2px solid #eee; background:#fafafa; cursor:pointer; transition:border 0.2s;" onclick="document.getElementById('mainProductImage').src=this.src">
+                        @endforeach
+                    </div>
+                @endif
             </div>
             <div class="product-info-container">
                 <div class="product-category">{{ $product->category }}</div>

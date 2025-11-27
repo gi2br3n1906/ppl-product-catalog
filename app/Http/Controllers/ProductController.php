@@ -4,25 +4,199 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\ProductImage;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage; // Penting untuk hapus file fisik
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the products (public catalog).
-     */
     public function index(Request $request)
     {
-        // TODO: Add filters, categories, search, etc. For now simple pagination
-        $products = Product::orderBy('created_at', 'desc')->paginate(12);
-
+        $products = Product::with('images')->orderBy('created_at', 'desc')->paginate(12);
         return view('catalog', compact('products'));
     }
 
-    /**
-     * Display the specified product.
-     */
     public function show(Product $product)
     {
         return view('product.show', compact('product'));
+    }
+
+    public function kelolaProduk(Request $request)
+    {
+        $user = auth()->user();
+        // Ambil produk milik seller yang sedang login saja
+        $products = Product::with('images')->where('seller_id', $user->id)->get();
+        return view('seller.kelola-produk', compact('products'));
+    }
+
+    public function storeProduk(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'required|integer|min:0',
+            'stock' => 'required|integer|min:0',
+            'category' => 'required|string|max:255',
+            'primary_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $user = auth()->user();
+            $product = Product::create([
+                'name' => $request->name,
+                'description' => $request->description,
+                'price' => $request->price,
+                'stock' => $request->stock,
+                'category' => $request->category,
+                'seller_id' => $user->id,
+            ]);
+
+            // Simpan gambar utama
+            if ($request->hasFile('primary_image')) {
+                $primaryPath = $request->file('primary_image')->store('products', 'public');
+                ProductImage::create([
+                    'product_id' => $product->id,
+                    'image_path' => $primaryPath,
+                    'is_primary' => true,
+                ]);
+            }
+
+            // Simpan gambar tambahan
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $img) {
+                    $imgPath = $img->store('products', 'public');
+                    ProductImage::create([
+                        'product_id' => $product->id,
+                        'image_path' => $imgPath,
+                        'is_primary' => false,
+                    ]);
+                }
+            }
+
+            DB::commit();
+            return redirect()->route('seller.kelola-produk')->with('success', 'Produk berhasil ditambahkan!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['msg' => 'Gagal menambah produk: ' . $e->getMessage()])->withInput();
+        }
+    }
+
+    /**
+     * UPDATE PRODUK
+     */
+    public function updateProduk(Request $request, $id)
+    {
+        // Pastikan produk milik seller yang login
+        $product = Product::where('id', $id)->where('seller_id', auth()->id())->firstOrFail();
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'required|integer|min:0',
+            'stock' => 'required|integer|min:0',
+            'category' => 'required|string|max:255',
+            'primary_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Nullable saat edit
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            // Update data teks
+            $product->update([
+                'name' => $request->name,
+                'description' => $request->description,
+                'price' => $request->price,
+                'stock' => $request->stock,
+                'category' => $request->category,
+            ]);
+
+            // Jika ada upload gambar utama baru
+            if ($request->hasFile('primary_image')) {
+                // 1. Cari gambar lama
+                $oldPrimary = ProductImage::where('product_id', $product->id)->where('is_primary', true)->first();
+                
+                // 2. Hapus file lama dari storage & database
+                if ($oldPrimary) {
+                    Storage::disk('public')->delete($oldPrimary->image_path);
+                    $oldPrimary->delete();
+                }
+
+                // 3. Upload yang baru
+                $primaryPath = $request->file('primary_image')->store('products', 'public');
+                ProductImage::create([
+                    'product_id' => $product->id,
+                    'image_path' => $primaryPath,
+                    'is_primary' => true,
+                ]);
+            }
+
+            // Jika ada upload gambar tambahan (Append/Tambah lagi)
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $img) {
+                    $imgPath = $img->store('products', 'public');
+                    ProductImage::create([
+                        'product_id' => $product->id,
+                        'image_path' => $imgPath,
+                        'is_primary' => false,
+                    ]);
+                }
+            }
+
+            DB::commit();
+            return redirect()->route('seller.kelola-produk')->with('success', 'Produk berhasil diperbarui!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['msg' => 'Gagal update produk: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * HAPUS PRODUK (KESELURUHAN)
+     */
+    public function destroyProduk($id)
+    {
+        $product = Product::where('id', $id)->where('seller_id', auth()->id())->firstOrFail();
+
+        // Hapus semua file gambar dari storage
+        foreach ($product->images as $image) {
+            Storage::disk('public')->delete($image->image_path);
+        }
+
+        // Hapus record di DB (Cascade akan menghapus data di tabel product_images juga)
+        $product->delete();
+
+        return redirect()->route('seller.kelola-produk')->with('success', 'Produk berhasil dihapus.');
+    }
+
+    /**
+     * HAPUS SATU GAMBAR SPESIFIK (Fitur Tombol Silang)
+     */
+    public function deleteImage($id)
+    {
+        // 1. Cari data gambar berdasarkan ID
+        $image = ProductImage::find($id);
+
+        if (!$image) {
+            return response()->json(['status' => 'error', 'message' => 'Gambar tidak ditemukan'], 404);
+        }
+
+        // 2. Cek Keamanan: Pastikan produknya milik seller yang sedang login
+        $product = Product::where('id', $image->product_id)->where('seller_id', auth()->id())->first();
+        
+        if (!$product) {
+            return response()->json(['status' => 'error', 'message' => 'Unauthorized Access'], 403);
+        }
+
+        // 3. Hapus File Fisik di Storage
+        if (Storage::disk('public')->exists($image->image_path)) {
+            Storage::disk('public')->delete($image->image_path);
+        }
+
+        // 4. Hapus Record di Database
+        $image->delete();
+
+        return response()->json(['status' => 'success', 'message' => 'Gambar berhasil dihapus']);
     }
 }

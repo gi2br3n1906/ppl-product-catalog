@@ -61,9 +61,27 @@ class DashboardController extends Controller
         //     ->where('seller_id', auth()->id())
         //     ->get();
 
-        // Dummy data
-        $labels = ['Buku Tulis', 'Pulpen Hitam', 'Penggaris 30cm', 'Penghapus', 'Pensil 2B'];
-        $data = [150, 200, 75, 120, 180];
+        // Dummy data (40 items untuk demo cramp)
+        $labels = [
+            'Buku Tulis', 'Pulpen Hitam', 'Penggaris 30cm', 'Penghapus', 'Pensil 2B', 
+            'Spidol Warna', 'Kertas HVS A4', 'Stapler Kecil', 'Lem Kertas', 'Gunting',
+            'Map Plastik', 'Binder B5', 'Isi Binder', 'Correction Tape', 'Sticky Notes',
+            'Kalkulator', 'Jangka', 'Busur Derajat', 'Cutter', 'Lakban Bening',
+            'Klip Kertas', 'Amplop Coklat', 'Amplop Putih', 'Tinta Printer', 'Kertas Foto',
+            'Buku Gambar A3', 'Krayon 12 Warna', 'Pensil Warna', 'Rautan Pensil', 'Tempat Pensil',
+            'Papan Ujian', 'Kertas Kado', 'Pita Perekat', 'Double Tape', 'Lem Tembak',
+            'Isi Staples', 'Buku Agenda', 'Kalender Meja', 'Whiteboard Marker', 'Penghapus Papan'
+        ];
+        $data = [
+            150, 200, 75, 120, 180, 
+            95, 300, 60, 85, 110,
+            140, 55, 210, 90, 130,
+            45, 70, 65, 100, 160,
+            200, 150, 120, 40, 5,
+            90, 65, 110, 130, 75,
+            100, 180, 140, 95, 3,
+            2, 60, 30, 120, 85
+        ];
         
         // Cek apakah ada data
         $hasData = !empty($data) && array_sum($data) > 0;
@@ -89,9 +107,27 @@ class DashboardController extends Controller
         //     ->groupBy('products.id', 'products.name')
         //     ->get();
 
-        // Dummy data
-        $labels = ['Buku Tulis', 'Pulpen Hitam', 'Penggaris 30cm', 'Penghapus', 'Pensil 2B'];
-        $data = [4.5, 4.8, 4.2, 4.6, 4.9];
+        // Dummy data (40 items)
+        $labels = [
+            'Buku Tulis', 'Pulpen Hitam', 'Penggaris 30cm', 'Penghapus', 'Pensil 2B', 
+            'Spidol Warna', 'Kertas HVS A4', 'Stapler Kecil', 'Lem Kertas', 'Gunting',
+            'Map Plastik', 'Binder B5', 'Isi Binder', 'Correction Tape', 'Sticky Notes',
+            'Kalkulator', 'Jangka', 'Busur Derajat', 'Cutter', 'Lakban Bening',
+            'Klip Kertas', 'Amplop Coklat', 'Amplop Putih', 'Tinta Printer', 'Kertas Foto',
+            'Buku Gambar A3', 'Krayon 12 Warna', 'Pensil Warna', 'Rautan Pensil', 'Tempat Pensil',
+            'Papan Ujian', 'Kertas Kado', 'Pita Perekat', 'Double Tape', 'Lem Tembak',
+            'Isi Staples', 'Buku Agenda', 'Kalender Meja', 'Whiteboard Marker', 'Penghapus Papan'
+        ];
+        $data = [
+            4.5, 4.8, 4.2, 4.6, 4.9, 
+            4.7, 4.4, 4.3, 4.5, 4.6,
+            4.1, 4.8, 4.7, 4.5, 4.9,
+            4.6, 4.3, 4.2, 4.4, 4.5,
+            4.3, 4.5, 4.6, 4.8, 4.7,
+            4.9, 4.4, 4.5, 4.2, 4.6,
+            4.7, 4.3, 4.5, 4.8, 4.4,
+            4.6, 4.9, 4.5, 4.7, 4.3
+        ];
         
         // Cek apakah ada data
         $hasData = !empty($data) && array_sum($data) > 0;
@@ -199,6 +235,25 @@ class DashboardController extends Controller
         return response()->json([
             'years' => $years,
             'current_year' => $currentYear
+        ]);
+    }
+
+    /**
+     * Mengembalikan daftar produk dengan stok menipis (< 8)
+     * GET /api/dashboard/low-stock
+     */
+    public function getLowStockProducts()
+    {
+        // Dummy data sesuai dengan getStockData
+        // Kita tambahkan beberapa dummy data lagi untuk demo
+        $lowStockProducts = [
+            ['name' => 'Lem Tembak', 'stock' => 3],
+            ['name' => 'Kertas Foto', 'stock' => 5],
+            ['name' => 'Isi Staples', 'stock' => 2],
+        ];
+
+        return response()->json([
+            'products' => $lowStockProducts
         ]);
     }
 }
