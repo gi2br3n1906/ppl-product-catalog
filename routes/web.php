@@ -23,6 +23,14 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
 });
 
+// API Wilayah untuk dropdown register (tidak perlu auth)
+Route::prefix('api/wilayah')->group(function () {
+    Route::get('/provinsi', [\App\Http\Controllers\WilayahController::class, 'provinsi']);
+    Route::get('/kabupaten', [\App\Http\Controllers\WilayahController::class, 'kabupaten']);
+    Route::get('/kecamatan', [\App\Http\Controllers\WilayahController::class, 'kecamatan']);
+    Route::get('/kelurahan', [\App\Http\Controllers\WilayahController::class, 'kelurahan']);
+});
+
 // Route untuk user yang sudah login (Protected routes)
 Route::middleware('auth')->group(function () {
     // Logout
@@ -64,5 +72,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/seller-registrations/{id}', [SellerRegistrationController::class, 'show'])->name('seller-registrations.show');
         Route::post('/seller-registrations/{id}/approve', [SellerRegistrationController::class, 'approve'])->name('seller-registrations.approve');
         Route::post('/seller-registrations/{id}/reject', [SellerRegistrationController::class, 'reject'])->name('seller-registrations.reject');
+        Route::delete('/seller-registrations/{id}', [SellerRegistrationController::class, 'destroy'])->name('seller-registrations.destroy');
     });
 });

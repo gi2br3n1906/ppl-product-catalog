@@ -24,7 +24,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 3px solid #ACEB02;
         }
         
         .navbar-brand {
@@ -188,6 +187,90 @@
             justify-content: center;
             gap: 5px;
         }
+        
+        .filter-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .filter-section label {
+            color: #01343B;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .filter-section select {
+            padding: 8px 12px;
+            border: 2px solid #e1e1e1;
+            border-radius: 6px;
+            font-size: 14px;
+            min-width: 200px;
+            cursor: pointer;
+        }
+        
+        .filter-section select:focus {
+            outline: none;
+            border-color: #01343B;
+        }
+        
+        .btn-filter {
+            background: #01343B;
+            color: white;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .btn-filter:hover {
+            background: #023840;
+        }
+        
+        .btn-reset {
+            background: #6c757d;
+            color: white;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-reset:hover {
+            background: #5a6268;
+        }
+        
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+            margin-left: 5px;
+        }
+        
+        .btn-delete:hover {
+            background: #c82333;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
@@ -216,6 +299,20 @@
                 {{ session('error') }}
             </div>
         @endif
+
+        <div class="filter-section">
+            <form method="GET" action="{{ route('admin.seller-registrations.index') }}" style="display: flex; align-items: center; gap: 15px; width: 100%;">
+                <label for="status">Filter Status:</label>
+                <select name="status" id="status">
+                    <option value="">Semua Status</option>
+                    <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
+                    <option value="approved" {{ request('status') === 'approved' ? 'selected' : '' }}>Approved</option>
+                    <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>Rejected</option>
+                </select>
+                <button type="submit" class="btn-filter">Filter</button>
+                <a href="{{ route('admin.seller-registrations.index') }}" class="btn-reset">Reset</a>
+            </form>
+        </div>
 
         <div class="table-container">
             <table>
@@ -248,9 +345,16 @@
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('admin.seller-registrations.show', $registration->id) }}" class="btn btn-detail">
-                                    Lihat Detail
-                                </a>
+                                <div class="action-buttons">
+                                    <a href="{{ route('admin.seller-registrations.show', $registration->id) }}" class="btn btn-detail">
+                                        Lihat Detail
+                                    </a>
+                                    <form action="{{ route('admin.seller-registrations.destroy', $registration->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data seller ini? Data yang sudah dihapus tidak dapat dikembalikan.')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn-delete">Hapus</button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @empty

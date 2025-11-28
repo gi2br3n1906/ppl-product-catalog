@@ -24,7 +24,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 3px solid #ACEB02;
         }
         
         .navbar-brand {
@@ -120,7 +119,6 @@
             font-weight: 600;
             margin-bottom: 20px;
             padding-bottom: 10px;
-            border-bottom: 2px solid #ACEB02;
         }
         
         .info-grid {

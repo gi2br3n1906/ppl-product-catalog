@@ -136,6 +136,23 @@
             text-decoration: underline;
         }
         
+        .back-to-catalog {
+            text-align: center;
+            margin-top: 15px;
+        }
+        
+        .back-to-catalog a {
+            color: #01343B;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+        
+        .back-to-catalog a:hover {
+            text-decoration: underline;
+        }
+        
         .alert {
             padding: 12px 15px;
             border-radius: 10px;
@@ -227,6 +244,10 @@
         
         <div class="seller-register-link">
             Belum punya akun? <a href="{{ route('seller.register.form') }}">Daftar sebagai Seller</a>
+        </div>
+        
+        <div class="back-to-catalog">
+            <a href="{{ route('catalog') }}">Kembali ke Katalog Produk</a>
         </div>
     </div>
 </body>

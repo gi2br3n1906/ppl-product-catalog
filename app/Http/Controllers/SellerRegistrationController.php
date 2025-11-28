@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules\Password;
+use App\Mail\SellerRegistrationReceived;
+use App\Mail\SellerRegistrationApproved;
+use App\Mail\SellerRegistrationRejected;
 
 class SellerRegistrationController extends Controller
 {
@@ -106,6 +109,14 @@ class SellerRegistrationController extends Controller
             'status' => 'pending',
         ]);
 
+        // Kirim email konfirmasi ke seller
+        try {
+            Mail::to($registration->email_pic)->send(new SellerRegistrationReceived($registration));
+        } catch (\Exception $e) {
+            // Log error tapi tetap lanjutkan proses registrasi
+            \Log::error('Failed to send registration email: ' . $e->getMessage());
+        }
+
         // Redirect dengan pesan sukses
         return redirect()->route('seller.registration.success')
             ->with('success', 'Registrasi berhasil! Silakan tunggu verifikasi dari admin. Kami akan mengirimkan email notifikasi setelah proses verifikasi selesai.');
@@ -122,9 +133,16 @@ class SellerRegistrationController extends Controller
     /**
      * Admin: Menampilkan daftar registrasi yang perlu diverifikasi
      */
-    public function index()
+    public function index(Request $request)
     {
-        $registrations = SellerRegistration::orderBy('created_at', 'desc')->paginate(20);
+        $query = SellerRegistration::query();
+        
+        // Filter berdasarkan status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+        
+        $registrations = $query->orderBy('created_at', 'desc')->paginate(20);
         return view('admin.seller-registrations.index', compact('registrations'));
     }
 
@@ -164,8 +182,11 @@ class SellerRegistrationController extends Controller
         ]);
 
         // Kirim email notifikasi approval
-        // TODO: Implementasi email notification
-        // Mail::to($registration->email_pic)->send(new SellerApproved($registration));
+        try {
+            Mail::to($registration->email_pic)->send(new SellerRegistrationApproved($registration));
+        } catch (\Exception $e) {
+            \Log::error('Failed to send approval email: ' . $e->getMessage());
+        }
 
         return back()->with('success', 'Registrasi berhasil disetujui! Email notifikasi telah dikirim ke seller.');
     }
@@ -196,9 +217,38 @@ class SellerRegistrationController extends Controller
         ]);
 
         // Kirim email notifikasi rejection
-        // TODO: Implementasi email notification
-        // Mail::to($registration->email_pic)->send(new SellerRejected($registration));
+        try {
+            Mail::to($registration->email_pic)->send(new SellerRegistrationRejected($registration));
+        } catch (\Exception $e) {
+            \Log::error('Failed to send rejection email: ' . $e->getMessage());
+        }
 
         return back()->with('success', 'Registrasi ditolak. Email notifikasi telah dikirim ke seller.');
+    }
+
+    /**
+     * Admin: Hapus seller registration
+     */
+    public function destroy($id)
+    {
+        $registration = SellerRegistration::findOrFail($id);
+        
+        // Hapus file jika ada
+        if ($registration->foto_pic) {
+            Storage::disk('public')->delete($registration->foto_pic);
+        }
+        if ($registration->file_ktp) {
+            Storage::disk('public')->delete($registration->file_ktp);
+        }
+        
+        // Jika sudah approved, hapus juga user nya
+        if ($registration->status === 'approved') {
+            User::where('email', $registration->email_pic)->delete();
+        }
+        
+        $registration->delete();
+        
+        return redirect()->route('admin.seller-registrations.index')
+            ->with('success', 'Data seller berhasil dihapus.');
     }
 }

@@ -48,7 +48,6 @@
             font-weight: bold;
             margin: 30px 0 20px 0;
             padding: 10px 0;
-            border-bottom: 2px solid #ACEB02;
             position: relative;
         }
         
@@ -66,6 +65,7 @@
             margin-bottom: 20px;
         }
         
+
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -84,19 +84,36 @@
             color: #e74c3c;
         }
         
+
         .form-group input,
-        .form-group textarea {
+        .form-group textarea,
+        .form-group select {
             width: 100%;
             padding: 12px 15px;
             border: 2px solid #e1e1e1;
             border-radius: 10px;
             font-size: 14px;
             transition: all 0.3s ease;
+            background: #fff;
+            appearance: none;
         }
         
+
         .form-group textarea {
             min-height: 100px;
             resize: vertical;
+        }
+
+        .form-group select:focus,
+        .form-group select:hover {
+            outline: none;
+            border-color: #01343B;
+            box-shadow: 0 0 0 3px rgba(1, 52, 59, 0.1);
+        }
+
+        .form-group select option {
+            background: #fff;
+            color: #333;
         }
         
         .form-group input:focus,
@@ -356,7 +373,6 @@
                         <div class="error-message">{{ $message }}</div>
                     @enderror
                 </div>
-
                 <div class="form-group">
                     <label for="rw">RW <span class="required">*</span></label>
                     <input 
@@ -373,52 +389,45 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="kelurahan">Kelurahan <span class="required">*</span></label>
-                <input 
-                    type="text" 
-                    id="kelurahan" 
-                    name="kelurahan" 
-                    value="{{ old('kelurahan') }}" 
-                    placeholder="Nama kelurahan"
-                    required
-                >
-                @error('kelurahan')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>
-
             <div class="form-row">
                 <div class="form-group">
-                    <label for="kab_kota">Kabupaten/Kota <span class="required">*</span></label>
-                    <input 
-                        type="text" 
-                        id="kab_kota" 
-                        name="kab_kota" 
-                        value="{{ old('kab_kota') }}" 
-                        placeholder="Kabupaten/Kota"
-                        required
-                    >
-                    @error('kab_kota')
-                        <div class="error-message">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="form-group">
                     <label for="provinsi">Provinsi <span class="required">*</span></label>
-                    <input 
-                        type="text" 
-                        id="provinsi" 
-                        name="provinsi" 
-                        value="{{ old('provinsi') }}" 
-                        placeholder="Nama provinsi"
-                        required
-                    >
+                    <select id="provinsi" name="provinsi" required>
+                        <option value="">Pilih Provinsi</option>
+                    </select>
                     @error('provinsi')
                         <div class="error-message">{{ $message }}</div>
                     @enderror
                 </div>
+                <div class="form-group">
+                    <label for="kabupaten">Kabupaten/Kota <span class="required">*</span></label>
+                    <select id="kabupaten" name="kab_kota" required>
+                        <option value="">Pilih Kabupaten/Kota</option>
+                    </select>
+                    @error('kab_kota')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
             </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="kecamatan">Kecamatan <span class="required">*</span></label>
+                    <select id="kecamatan" name="kecamatan" required>
+                        <option value="">Pilih Kecamatan</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="kelurahan">Kelurahan <span class="required">*</span></label>
+                    <select id="kelurahan" name="kelurahan" required>
+                        <option value="">Pilih Kelurahan</option>
+                    </select>
+                    @error('kelurahan')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <!-- Dropdown wilayah diganti, lihat atas -->
 
             <!-- Dokumen Identitas PIC -->
             <div class="section-title">Dokumen Identitas PIC</div>
@@ -523,7 +532,6 @@
         function updateFileName(input, labelId, nameId) {
             const label = document.getElementById(labelId);
             const nameDiv = document.getElementById(nameId);
-            
             if (input.files && input.files[0]) {
                 const fileName = input.files[0].name;
                 const fileSize = (input.files[0].size / 1024 / 1024).toFixed(2); // MB
@@ -534,6 +542,74 @@
                 nameDiv.textContent = '';
             }
         }
+
+        // Dropdown wilayah dinamis
+        document.addEventListener('DOMContentLoaded', function() {
+            const provinsiSelect = document.getElementById('provinsi');
+            const kabupatenSelect = document.getElementById('kabupaten');
+            const kecamatanSelect = document.getElementById('kecamatan');
+            const kelurahanSelect = document.getElementById('kelurahan');
+
+            // Provinsi
+            fetch('/api/wilayah/provinsi')
+                .then(res => res.json())
+                .then(data => {
+                    data.forEach(item => {
+                        const opt = document.createElement('option');
+                        opt.value = item.id;
+                        opt.textContent = item.name;
+                        provinsiSelect.appendChild(opt);
+                    });
+                });
+
+            provinsiSelect.addEventListener('change', function() {
+                kabupatenSelect.innerHTML = '<option value="">Pilih Kabupaten/Kota</option>';
+                kecamatanSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
+                kelurahanSelect.innerHTML = '<option value="">Pilih Kelurahan</option>';
+                if (!this.value) return;
+                fetch(`/api/wilayah/kabupaten?provinsi_id=${this.value}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        data.forEach(item => {
+                            const opt = document.createElement('option');
+                            opt.value = item.id;
+                            opt.textContent = item.name;
+                            kabupatenSelect.appendChild(opt);
+                        });
+                    });
+            });
+
+            kabupatenSelect.addEventListener('change', function() {
+                kecamatanSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
+                kelurahanSelect.innerHTML = '<option value="">Pilih Kelurahan</option>';
+                if (!this.value) return;
+                fetch(`/api/wilayah/kecamatan?kabupaten_id=${this.value}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        data.forEach(item => {
+                            const opt = document.createElement('option');
+                            opt.value = item.id;
+                            opt.textContent = item.name;
+                            kecamatanSelect.appendChild(opt);
+                        });
+                    });
+            });
+
+            kecamatanSelect.addEventListener('change', function() {
+                kelurahanSelect.innerHTML = '<option value="">Pilih Kelurahan</option>';
+                if (!this.value) return;
+                fetch(`/api/wilayah/kelurahan?kecamatan_id=${this.value}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        data.forEach(item => {
+                            const opt = document.createElement('option');
+                            opt.value = item.name;
+                            opt.textContent = item.name;
+                            kelurahanSelect.appendChild(opt);
+                        });
+                    });
+            });
+        });
     </script>
 </body>
 </html>

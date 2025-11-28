@@ -37,7 +37,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 3px solid #ACEB02;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
