@@ -173,25 +173,7 @@
             margin-bottom: 24px;
         }
         
-        .add-to-cart-form {
-            margin-top: auto;
-        }
-
-        .btn-add-to-cart {
-            width: 100%;
-            background: #ACEB02;
-            border: none;
-            padding: 14px;
-            border-radius: 6px;
-            font-weight: 700;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .btn-add-to-cart:hover {
-            background: #9dd302;
-        }
+        /* Add-to-cart (buy) flow removed: we only show product details for now */
 
         .back-link {
             display: inline-block;
@@ -261,16 +243,7 @@
                 <div class="product-stock">Stok: {{ $product->stock }}</div>
                 <p class="product-description">{{ $product->description }}</p>
 
-                @auth
-                    <form action="{{ route('cart.add') }}" method="POST" class="add-to-cart-form">
-                        @csrf
-                        <input type="hidden" name="product_id" value="{{ $product->id }}">
-                        <input type="hidden" name="quantity" value="1">
-                        <button type="submit" class="btn-add-to-cart">Tambah ke Keranjang</button>
-                    </form>
-                @else
-                    <a href="{{ route('login', ['redirect' => route('product.show', $product)]) }}" class="btn-add-to-cart" style="display: block; text-align: center; text-decoration: none; color: #01343B;">Login untuk Beli</a>
-                @endauth
+                <!-- Buy flow removed: showing detail only -->
             </div>
         </div>
     </div>

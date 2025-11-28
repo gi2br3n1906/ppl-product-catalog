@@ -113,17 +113,7 @@
             background: #e0e0e0;
         }
 
-        .btn-product-action.btn-buy {
-            background:#ACEB02;
-            border: none;
-            color: #01343B;
-            font-weight: 700;
-            padding: 10px; /* Original padding for buy button */
-        }
-
-        .btn-product-action.btn-buy:hover {
-            background: #9dd302;
-        }
+        /* btn-buy removed: buying flow disabled for now */
         
         .btn-logout {
             background: transparent;
@@ -294,20 +284,9 @@
                         <div style="font-weight:600; color:#234; margin-bottom:8px;">Rp {{ number_format($product->price, 0, ',', '.') }}</div>
                         <div style="font-size:12px; color:#666; margin-bottom:12px;">Stok: {{ $product->stock }}</div>
 
-                        <!-- Action Buttons -->
+                        <!-- Action Buttons (Buy disabled: only show Detail) -->
                         <div style="display:flex; gap:8px;">
                             <a href="{{ route('product.show', $product) }}" class="btn-product-action" style="flex:1;">Detail</a>
-                            
-                            @auth
-                                <form action="{{ route('cart.add') }}" method="POST" style="display:inline-block; flex:1;">
-                                    @csrf
-                                    <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                    <input type="hidden" name="quantity" value="1">
-                                    <button type="submit" class="btn-product-action btn-buy">Beli</button>
-                                </form>
-                            @else
-                                <a href="{{ route('login', ['redirect' => route('catalog', ['page' => request()->query('page', 1)]) . '?redirect_product=' . $product->id]) }}" class="btn-product-action btn-buy">Login to Buy</a>
-                            @endauth
                         </div>
                     </div>
                 @empty
@@ -321,38 +300,6 @@
         </div>
     </div>
 
-    @if(request()->query('redirect_product') && Auth::check())
-        <script>
-            // show a small confirm to add product to cart after login
-            document.addEventListener('DOMContentLoaded', () => {
-                const productId = '{{ request()->query('redirect_product') }}';
-                if (productId) {
-                    if (confirm('Anda baru saja login — tambahkan produk ini ke keranjang sekarang?')) {
-                        // Create a form and POST to cart.add
-                        const form = document.createElement('form');
-                        form.method = 'POST';
-                        form.action = '{{ route('cart.add') }}';
-                        const csrf = document.createElement('input');
-                        csrf.type = 'hidden';
-                        csrf.name = '_token';
-                        csrf.value = '{{ csrf_token() }}';
-                        const pid = document.createElement('input');
-                        pid.type = 'hidden';
-                        pid.name = 'product_id';
-                        pid.value = productId;
-                        const qty = document.createElement('input');
-                        qty.type = 'hidden';
-                        qty.name = 'quantity';
-                        qty.value = 1;
-                        form.appendChild(csrf);
-                        form.appendChild(pid);
-                        form.appendChild(qty);
-                        document.body.appendChild(form);
-                        form.submit();
-                    }
-                }
-            })
-        </script>
-    @endif
+    {{-- Buy flow (autopost after login) removed — only product detail display for now --}}
 </body>
 </html>
