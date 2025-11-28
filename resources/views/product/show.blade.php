@@ -26,6 +26,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+<<<<<<< HEAD
+=======
+            border-bottom: 3px solid #ACEB02;
+>>>>>>> origin
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
@@ -172,6 +176,7 @@
             margin-bottom: 24px;
         }
         
+<<<<<<< HEAD
         .add-to-cart-form {
             margin-top: auto;
         }
@@ -191,6 +196,9 @@
         .btn-add-to-cart:hover {
             background: #9dd302;
         }
+=======
+        /* Add-to-cart (buy) flow removed: we only show product details for now */
+>>>>>>> origin
 
         .back-link {
             display: inline-block;
@@ -260,6 +268,7 @@
                 <div class="product-stock">Stok: {{ $product->stock }}</div>
                 <p class="product-description">{{ $product->description }}</p>
 
+<<<<<<< HEAD
                 @auth
                     <form action="{{ route('cart.add') }}" method="POST" class="add-to-cart-form">
                         @csrf
@@ -270,6 +279,9 @@
                 @else
                     <a href="{{ route('login', ['redirect' => route('product.show', $product)]) }}" class="btn-add-to-cart" style="display: block; text-align: center; text-decoration: none; color: #01343B;">Login untuk Beli</a>
                 @endauth
+=======
+                <!-- Buy flow removed: showing detail only -->
+>>>>>>> origin
             </div>
         </div>
     </div>

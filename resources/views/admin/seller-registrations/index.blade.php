@@ -24,6 +24,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 3px solid #ACEB02;
         }
         
         .navbar-brand {
@@ -345,6 +346,7 @@
                                 @endif
                             </td>
                             <td>
+<<<<<<< HEAD
                                 <div class="action-buttons">
                                     <a href="{{ route('admin.seller-registrations.show', $registration->id) }}" class="btn btn-detail">
                                         Lihat Detail
@@ -355,6 +357,11 @@
                                         <button type="submit" class="btn-delete">Hapus</button>
                                     </form>
                                 </div>
+=======
+                                <a href="{{ route('admin.seller-registrations.show', $registration->id) }}" class="btn btn-detail">
+                                    Lihat Detail
+                                </a>
+>>>>>>> origin
                             </td>
                         </tr>
                     @empty

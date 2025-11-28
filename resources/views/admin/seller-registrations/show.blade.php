@@ -24,6 +24,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 3px solid #ACEB02;
         }
         
         .navbar-brand {
