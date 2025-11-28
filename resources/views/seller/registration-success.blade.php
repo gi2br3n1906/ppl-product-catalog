@@ -122,7 +122,7 @@
             </ul>
         </div>
         
-        <a href="{{ route('login') }}" class="btn-home">Kembali ke Halaman Login</a>
+        <a href="{{ route('catalog') }}" class="btn-home">Kembali ke Katalog</a>
     </div>
 </body>
 </html>

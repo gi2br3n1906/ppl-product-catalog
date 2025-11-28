@@ -346,7 +346,6 @@
                                 @endif
                             </td>
                             <td>
-<<<<<<< HEAD
                                 <div class="action-buttons">
                                     <a href="{{ route('admin.seller-registrations.show', $registration->id) }}" class="btn btn-detail">
                                         Lihat Detail
@@ -357,11 +356,6 @@
                                         <button type="submit" class="btn-delete">Hapus</button>
                                     </form>
                                 </div>
-=======
-                                <a href="{{ route('admin.seller-registrations.show', $registration->id) }}" class="btn btn-detail">
-                                    Lihat Detail
-                                </a>
->>>>>>> origin
                             </td>
                         </tr>
                     @empty

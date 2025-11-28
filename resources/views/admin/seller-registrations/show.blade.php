@@ -411,6 +411,8 @@
                     <div class="info-label">RW</div>
                     <div class="info-value">{{ $registration->rw }}</div>
                 </div>
+            </div>
+            <div class="info-grid">
                 <div class="info-item">
                     <div class="info-label">Kelurahan</div>
                     <div class="info-value">{{ $registration->kelurahan }}</div>
@@ -419,6 +421,8 @@
                     <div class="info-label">Kabupaten/Kota</div>
                     <div class="info-value">{{ $registration->kab_kota }}</div>
                 </div>
+            </div>
+            <div class="info-grid">
                 <div class="info-item">
                     <div class="info-label">Provinsi</div>
                     <div class="info-value">{{ $registration->provinsi }}</div>
