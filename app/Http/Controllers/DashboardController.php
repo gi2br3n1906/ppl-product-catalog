@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Product;
+use App\Models\ProductReview;
+use App\Models\User;
+use App\Models\SellerRegistration;
 
 class DashboardController extends Controller
 {
@@ -107,36 +110,20 @@ class DashboardController extends Controller
         //     ->groupBy('products.id', 'products.name')
         //     ->get();
 
-        // Dummy data (40 items)
-        $labels = [
-            'Buku Tulis', 'Pulpen Hitam', 'Penggaris 30cm', 'Penghapus', 'Pensil 2B', 
-            'Spidol Warna', 'Kertas HVS A4', 'Stapler Kecil', 'Lem Kertas', 'Gunting',
-            'Map Plastik', 'Binder B5', 'Isi Binder', 'Correction Tape', 'Sticky Notes',
-            'Kalkulator', 'Jangka', 'Busur Derajat', 'Cutter', 'Lakban Bening',
-            'Klip Kertas', 'Amplop Coklat', 'Amplop Putih', 'Tinta Printer', 'Kertas Foto',
-            'Buku Gambar A3', 'Krayon 12 Warna', 'Pensil Warna', 'Rautan Pensil', 'Tempat Pensil',
-            'Papan Ujian', 'Kertas Kado', 'Pita Perekat', 'Double Tape', 'Lem Tembak',
-            'Isi Staples', 'Buku Agenda', 'Kalender Meja', 'Whiteboard Marker', 'Penghapus Papan'
-        ];
-        $data = [
-            4.5, 4.8, 4.2, 4.6, 4.9, 
-            4.7, 4.4, 4.3, 4.5, 4.6,
-            4.1, 4.8, 4.7, 4.5, 4.9,
-            4.6, 4.3, 4.2, 4.4, 4.5,
-            4.3, 4.5, 4.6, 4.8, 4.7,
-            4.9, 4.4, 4.5, 4.2, 4.6,
-            4.7, 4.3, 4.5, 4.8, 4.4,
-            4.6, 4.9, 4.5, 4.7, 4.3
-        ];
-        
-        // Cek apakah ada data
+        // Real query: average rating per product (global)
+        $ratingRows = DB::table('products')
+            ->leftJoin('product_reviews', 'products.id', '=', 'product_reviews.product_id')
+            ->select('products.id', 'products.name', DB::raw('AVG(product_reviews.rating) as avg_rating'))
+            ->groupBy('products.id', 'products.name')
+            ->orderByDesc('avg_rating')
+            ->limit(40)
+            ->get();
+
+        $labels = $ratingRows->pluck('name')->toArray();
+        $data = $ratingRows->map(fn($r) => round((float)$r->avg_rating, 2))->toArray();
         $hasData = !empty($data) && array_sum($data) > 0;
 
-        return response()->json([
-            'labels' => $labels,
-            'data' => $data,
-            'hasData' => $hasData
-        ]);
+        return response()->json(['labels' => $labels, 'data' => $data, 'hasData' => $hasData]);
     }
 
     /**
@@ -159,31 +146,25 @@ class DashboardController extends Controller
         //         ->get();
         // }
 
-        // Dummy data
-        // Data berbeda berdasarkan product_id untuk simulasi
-        if ($productId == 1) {
-            $labels = ['Jawa Barat', 'Jawa Tengah', 'DKI Jakarta', 'Bali'];
-            $data = [45, 32, 52, 18];
-        } elseif ($productId == 2) {
-            $labels = ['Jawa Timur', 'Jawa Tengah', 'Sumatra Utara', 'DKI Jakarta'];
-            $data = [38, 25, 25, 30];
-        } elseif ($productId == 3) {
-            $labels = ['DKI Jakarta', 'Jawa Barat', 'Bali'];
-            $data = [60, 40, 20];
-        } else {
-            // Default: semua produk
-            $labels = ['Jawa Barat', 'Jawa Tengah', 'Jawa Timur', 'DKI Jakarta', 'Bali', 'Sumatra Utara'];
-            $data = [45, 32, 38, 52, 18, 25];
+        $query = DB::table('product_reviews')
+            ->join('products', 'product_reviews.product_id', '=', 'products.id')
+            ->join('users', 'products.seller_id', '=', 'users.id')
+            ->leftJoin('seller_registrations', 'users.email', '=', 'seller_registrations.email_pic')
+            ->select('seller_registrations.provinsi as province', DB::raw('COUNT(DISTINCT product_reviews.reviewer_email) as total'))
+            ->whereNotNull('seller_registrations.provinsi')
+            ->groupBy('seller_registrations.provinsi')
+            ->orderByDesc('total');
+
+        if ($productId) {
+            $query->where('products.id', $productId);
         }
-        
-        // Cek apakah ada data
+
+        $rows = $query->get();
+        $labels = $rows->pluck('province')->toArray();
+        $data = $rows->pluck('total')->map(fn($v) => (int)$v)->toArray();
         $hasData = !empty($data) && array_sum($data) > 0;
 
-        return response()->json([
-            'labels' => $labels,
-            'data' => $data,
-            'hasData' => $hasData
-        ]);
+        return response()->json(['labels' => $labels, 'data' => $data, 'hasData' => $hasData]);
     }
 
     /**
@@ -254,6 +235,97 @@ class DashboardController extends Controller
 
         return response()->json([
             'products' => $lowStockProducts
+        ]);
+    }
+
+    /**
+     * Product category distribution - admin dashboard
+     * GET /api/admin/dashboard/product-category-distribution
+     */
+    public function getProductCategoryDistribution()
+    {
+        $rows = DB::table('products')
+            ->select(DB::raw("COALESCE(category, 'Uncategorized') as category"), DB::raw('COUNT(*) as total'))
+            ->groupBy('category')
+            ->orderByDesc('total')
+            ->get();
+
+        $labels = $rows->pluck('category')->toArray();
+        $data = $rows->pluck('total')->map(fn($v) => (int)$v)->toArray();
+
+        return response()->json(['labels' => $labels, 'data' => $data, 'total' => array_sum($data)]);
+    }
+
+    /**
+     * Sellers distribution by province (approved sellers only)
+     * GET /api/admin/dashboard/sellers-by-province
+     */
+    public function getSellersByProvince()
+    {
+        $rows = DB::table('seller_registrations')
+            ->select('provinsi', DB::raw('COUNT(*) as total'))
+            ->where('status', 'approved')
+            ->groupBy('provinsi')
+            ->orderByDesc('total')
+            ->get();
+
+        $labels = $rows->pluck('provinsi')->toArray();
+        $data = $rows->pluck('total')->map(fn($v) => (int)$v)->toArray();
+
+        return response()->json(['labels' => $labels, 'data' => $data, 'total' => array_sum($data)]);
+    }
+
+    /**
+     * Seller status comparison (Active vs Inactive)
+     * GET /api/admin/dashboard/seller-status-comparison
+     */
+    public function getSellerStatusComparison()
+    {
+        $rows = DB::table('seller_registrations')
+            ->select('status', DB::raw('COUNT(*) as total'))
+            ->groupBy('status')
+            ->get();
+
+        $active = 0; $inactive = 0;
+        foreach ($rows as $r) {
+            if ($r->status === 'approved') $active = (int)$r->total; else $inactive += (int)$r->total;
+        }
+
+        return response()->json(['labels' => ['Active', 'Inactive'], 'data' => [$active, $inactive], 'total' => $active + $inactive]);
+    }
+
+    /**
+     * Count of unique visitors who wrote reviews (unique reviewer_email)
+     * GET /api/admin/dashboard/reviewers-count
+     */
+    public function getReviewersCount()
+    {
+        $totalReviews = DB::table('product_reviews')->count();
+        $uniqueReviewers = DB::table('product_reviews')->distinct()->count('reviewer_email');
+
+        return response()->json(['total_reviews' => $totalReviews, 'unique_reviewers' => $uniqueReviewers]);
+    }
+
+    /**
+     * Admin dashboard overview
+     * GET /api/admin/dashboard/overview
+     */
+    public function getOverview()
+    {
+        $totalProducts = DB::table('products')->count();
+        $totalSellers = DB::table('seller_registrations')->count();
+        $activeSellers = DB::table('seller_registrations')->where('status', 'approved')->count();
+        $inactiveSellers = $totalSellers - $activeSellers;
+        $totalReviews = DB::table('product_reviews')->count();
+        $averageRating = DB::table('product_reviews')->avg('rating') ?? 0;
+
+        return response()->json([
+            'total_products' => $totalProducts,
+            'total_sellers' => $totalSellers,
+            'active_sellers' => $activeSellers,
+            'inactive_sellers' => $inactiveSellers,
+            'total_reviews' => $totalReviews,
+            'average_rating' => round((float)$averageRating, 2),
         ]);
     }
 }

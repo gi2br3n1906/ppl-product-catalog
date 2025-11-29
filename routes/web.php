@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SellerRegistrationController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 
@@ -65,9 +66,27 @@ Route::middleware('auth')->group(function () {
         Route::get('/years', [DashboardController::class, 'getYears'])->name('years');
         Route::get('/low-stock', [DashboardController::class, 'getLowStockProducts'])->name('low-stock');
     });
+
+    // Admin API: Protected and admin-only endpoints for platform dashboard & reports
+    Route::prefix('api/admin')->middleware(['admin'])->name('api.admin.')->group(function () {
+        // Dashboard data
+        Route::get('/dashboard/product-category-distribution', [DashboardController::class, 'getProductCategoryDistribution'])->name('dashboard.category-distribution');
+        Route::get('/dashboard/sellers-by-province', [DashboardController::class, 'getSellersByProvince'])->name('dashboard.sellers-by-province');
+        Route::get('/dashboard/seller-status-comparison', [DashboardController::class, 'getSellerStatusComparison'])->name('dashboard.seller-status');
+        Route::get('/dashboard/reviewers-count', [DashboardController::class, 'getReviewersCount'])->name('dashboard.reviewers-count');
+        Route::get('/dashboard/overview', [DashboardController::class, 'getOverview'])->name('dashboard.overview');
+
+        // Reports
+        Route::get('/reports/sellers', [ReportController::class, 'sellersReport'])->name('reports.sellers');
+        Route::get('/reports/locations', [ReportController::class, 'locationsReport'])->name('reports.locations');
+        Route::get('/reports/top-products', [ReportController::class, 'topProductsReport'])->name('reports.top-products');
+    });
     
     // Admin: Verifikasi Seller
-    Route::prefix('admin')->name('admin.')->group(function () {
+    Route::prefix('admin')->middleware(['admin'])->name('admin.')->group(function () {
+        Route::get('/dashboard', function () {
+            return view('admin.dashboard');
+        })->name('dashboard');
         Route::get('/seller-registrations', [SellerRegistrationController::class, 'index'])->name('seller-registrations.index');
         Route::get('/seller-registrations/{id}', [SellerRegistrationController::class, 'show'])->name('seller-registrations.show');
         Route::post('/seller-registrations/{id}/approve', [SellerRegistrationController::class, 'approve'])->name('seller-registrations.approve');

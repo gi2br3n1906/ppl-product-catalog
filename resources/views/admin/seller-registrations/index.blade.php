@@ -276,7 +276,13 @@
 </head>
 <body>
     <nav class="navbar">
-        <div class="navbar-brand">Admin Panel - CampusMarket</div>
+        <div style="display:flex; gap: 16px; align-items:center;">
+            <div class="navbar-brand">Admin Panel - CampusMarket</div>
+            <div style="display:flex; gap:8px; align-items:center;">
+                <a href="{{ route('admin.dashboard') }}" class="btn" style="background:transparent; color: white; border:2px solid rgba(255,255,255,0.06); padding:6px 12px; border-radius:6px; font-weight:600; text-decoration:none;" @if(request()->routeIs('admin.dashboard')) aria-current="page" style="background: #024c55;" @endif>Dashboard</a>
+                <a href="{{ route('admin.seller-registrations.index') }}" class="btn" style="background:transparent; color: white; border:2px solid rgba(255,255,255,0.06); padding:6px 12px; border-radius:6px; font-weight:600; text-decoration:none;" @if(request()->routeIs('admin.seller-registrations.*')) aria-current="page" style="background: #024c55;" @endif>Verifikasi Seller</a>
+            </div>
+        </div>
         <form action="{{ route('logout') }}" method="POST">
             @csrf
             <button type="submit" class="btn-logout">Logout</button>
