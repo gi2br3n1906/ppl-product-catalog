@@ -11,6 +11,7 @@ use App\Http\Controllers\CartController;
 // Halaman utama (Catalog) - Public, semua bisa akses
 Route::get('/', [ProductController::class, 'index'])->name('catalog');
 Route::get('/product/{product}', [ProductController::class, 'show'])->name('product.show');
+Route::post('/product/{product}/review', [ProductController::class, 'submitReview'])->name('product.review');
 
 // Route Authentication (Guest only - belum login)
 Route::middleware('guest')->group(function () {

@@ -21,6 +21,50 @@ class ProductController extends Controller
         return view('product.show', compact('product'));
     }
 
+    // Submit review produk
+    public function submitReview(Request $request, Product $product)
+    {
+        $request->validate([
+            'reviewer_name' => 'required|string|max:100',
+            'reviewer_phone' => 'required|string|max:20',
+            'reviewer_email' => 'required|email|max:100',
+            'rating' => 'required|integer|min:1|max:5',
+            'comment' => 'nullable|string|max:1000',
+        ]);
+
+        $review = $product->reviews()->create([
+            'reviewer_name' => $request->reviewer_name,
+            'reviewer_phone' => $request->reviewer_phone,
+            'reviewer_email' => $request->reviewer_email,
+            'rating' => $request->rating,
+            'comment' => $request->comment,
+        ]);
+
+        // Kirim email terima kasih beserta detail produk dan ulasan
+        try {
+            $emailBody = "Terima kasih telah memberikan ulasan dan rating untuk produk kami!\n\n" .
+                "Detail Produk:\n" .
+                "Nama Produk: {$product->name}\n" .
+                "Kategori: {$product->category}\n" .
+                "Harga: Rp " . number_format($product->price, 0, ',', '.') . "\n\n" .
+                "Ulasan Anda:\n" .
+                "Rating: {$review->rating} / 5\n" .
+                "Komentar: {$review->comment}\n\n" .
+                "Salam,\nCampusMarket";
+            \Mail::raw($emailBody, function ($message) use ($review, $product) {
+                $message->to($review->reviewer_email)
+                    ->subject('Terima Kasih atas Ulasan Anda untuk ' . $product->name);
+            });
+            $review->email_sent = true;
+            $review->email_sent_at = now();
+            $review->save();
+        } catch (\Exception $e) {
+            // Email gagal dikirim, tetap simpan review
+        }
+
+        return redirect()->route('product.show', $product)->with('review_success', 'Terima kasih atas ulasan Anda!');
+    }
+
     public function kelolaProduk(Request $request)
     {
         $user = auth()->user();

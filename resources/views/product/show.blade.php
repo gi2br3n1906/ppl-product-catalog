@@ -245,6 +245,79 @@
                 <!-- Buy flow removed: showing detail only -->
             </div>
         </div>
+            <!-- ULASAN PRODUK -->
+            <div style="margin-top:40px;">
+                <h2 style="color:#01343B; font-size:22px; font-weight:700; margin-bottom:18px;">Ulasan Produk</h2>
+                @php
+                    $reviews = $product->reviews()->latest()->get();
+                    $avgRating = $reviews->count() ? round($reviews->avg('rating'), 2) : null;
+                @endphp
+                <div style="margin-bottom:18px;">
+                    <span style="font-size:18px; font-weight:600; color:#234;">Rating Rata-rata: </span>
+                    @if($avgRating)
+                        <span style="font-size:18px; color:#FFD700; font-weight:700;">{{ $avgRating }} / 5</span>
+                    @else
+                        <span style="color:#999;">Belum ada rating</span>
+                    @endif
+                    <span style="font-size:14px; color:#666; margin-left:10px;">({{ $reviews->count() }} ulasan)</span>
+                </div>
+                <div style="max-height:320px; overflow-y:auto; background:#fff; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.06); padding:18px 20px; margin-bottom:30px;">
+                    @forelse($reviews as $review)
+                        <div style="border-bottom:1px solid #eee; padding-bottom:14px; margin-bottom:14px;">
+                            <div style="font-weight:600; color:#01343B;">{{ $review->reviewer_name }}</div>
+                            <div style="font-size:13px; color:#666;">{{ $review->reviewer_email }} | {{ $review->reviewer_phone }}</div>
+                            <div style="margin:6px 0;">
+                                <span style="color:#FFD700; font-weight:700; font-size:15px;">{{ $review->rating }} / 5</span>
+                            </div>
+                            <div style="font-size:15px; color:#333;">{{ $review->comment }}</div>
+                            <div style="font-size:12px; color:#aaa; margin-top:4px;">{{ $review->created_at->format('d M Y H:i') }}</div>
+                        </div>
+                    @empty
+                        <div style="color:#999; text-align:center;">Belum ada ulasan untuk produk ini.</div>
+                    @endforelse
+                </div>
+                <!-- FORM ULASAN -->
+                <div style="background:#fff; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.06); padding:22px 24px;">
+                    <h3 style="color:#01343B; font-size:18px; font-weight:600; margin-bottom:12px;">Tulis Ulasan & Rating</h3>
+                    <form method="POST" action="{{ route('product.review', $product) }}">
+                        @csrf
+                        <div style="margin-bottom:12px;">
+                            <label for="reviewer_name" style="font-weight:500;">Nama</label><br>
+                            <input type="text" name="reviewer_name" id="reviewer_name" required style="width:100%; padding:8px; border-radius:6px; border:1px solid #ccc;">
+                            @error('reviewer_name')<div style="color:#c00; font-size:13px;">{{ $message }}</div>@enderror
+                        </div>
+                        <div style="margin-bottom:12px;">
+                            <label for="reviewer_phone" style="font-weight:500;">Nomor HP</label><br>
+                            <input type="text" name="reviewer_phone" id="reviewer_phone" required style="width:100%; padding:8px; border-radius:6px; border:1px solid #ccc;">
+                            @error('reviewer_phone')<div style="color:#c00; font-size:13px;">{{ $message }}</div>@enderror
+                        </div>
+                        <div style="margin-bottom:12px;">
+                            <label for="reviewer_email" style="font-weight:500;">Email</label><br>
+                            <input type="email" name="reviewer_email" id="reviewer_email" required style="width:100%; padding:8px; border-radius:6px; border:1px solid #ccc;">
+                            @error('reviewer_email')<div style="color:#c00; font-size:13px;">{{ $message }}</div>@enderror
+                        </div>
+                        <div style="margin-bottom:12px;">
+                            <label for="rating" style="font-weight:500;">Rating (1-5)</label><br>
+                            <select name="rating" id="rating" required style="width:100%; padding:8px; border-radius:6px; border:1px solid #ccc;">
+                                <option value="">Pilih rating</option>
+                                @for($i=1; $i<=5; $i++)
+                                    <option value="{{ $i }}">{{ $i }}</option>
+                                @endfor
+                            </select>
+                            @error('rating')<div style="color:#c00; font-size:13px;">{{ $message }}</div>@enderror
+                        </div>
+                        <div style="margin-bottom:12px;">
+                            <label for="comment" style="font-weight:500;">Komentar/Ulasan</label><br>
+                            <textarea name="comment" id="comment" rows="3" style="width:100%; padding:8px; border-radius:6px; border:1px solid #ccc;"></textarea>
+                            @error('comment')<div style="color:#c00; font-size:13px;">{{ $message }}</div>@enderror
+                        </div>
+                        <button type="submit" style="background:#ACEB02; color:#01343B; font-weight:700; border:none; border-radius:6px; padding:10px 24px; cursor:pointer;">Kirim Ulasan</button>
+                    </form>
+                    @if(session('review_success'))
+                        <div style="margin-top:14px; color:#155724; background:#E8F5E9; padding:10px; border-radius:6px; font-weight:600;">{{ session('review_success') }}</div>
+                    @endif
+                </div>
+            </div>
     </div>
 </body>
 </html>
