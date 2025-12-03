@@ -542,7 +542,7 @@
             </div>
 
             <button type="submit" class="btn-submit">Registrasi Penjual</button>
-            <a href="{{ route('login') }}" class="btn-cancel">Batal</a>
+            <a href="{{ route('catalog') }}" class="btn-cancel">Batal</a>
         </form>
     </div>
 
