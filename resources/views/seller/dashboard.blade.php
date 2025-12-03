@@ -379,13 +379,7 @@
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="navbar-brand">CampusMarket - Seller Panel</div>
-        <form action="{{ route('logout') }}" method="POST">
-            @csrf
-            <button type="submit" class="btn-logout">Logout</button>
-        </form>
-    </nav>
+    @include('seller.navbar')
 
     <div class="container">
         <!-- Welcome Header -->

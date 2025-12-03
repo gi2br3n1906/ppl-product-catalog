@@ -202,13 +202,7 @@
 </head>
 <body>
 
-    <nav class="navbar">
-        <div class="navbar-brand">CampusMarket <span style="font-weight:400; font-size:14px; opacity:0.8; margin-left:8px;">| Seller Panel</span></div>
-        <form action="{{ route('logout') }}" method="POST">
-            @csrf
-            <button type="submit" class="btn-logout">Logout</button>
-        </form>
-    </nav>
+    @include('seller.navbar')
 
     <div class="container">
         @if(session('success')) <div class="alert alert-success">{{ session('success') }}</div> @endif

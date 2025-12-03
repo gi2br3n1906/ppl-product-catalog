@@ -230,7 +230,6 @@
 <body>
     <nav class="navbar">
         <a href="{{ route('catalog') }}" class="navbar-brand">CampusMarket</a>
-        
         <div class="navbar-right">
             @auth
                 <div class="user-info">
@@ -242,6 +241,7 @@
                 </div>
             @else
                 <a href="{{ route('login') }}" class="btn-login">Login</a>
+                <a href="{{ route('seller.register.form') }}" class="btn-register">Daftar Seller</a>
             @endauth
         </div>
     </nav>
