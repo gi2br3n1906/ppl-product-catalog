@@ -46,6 +46,10 @@ Route::middleware('auth')->group(function () {
         return view('seller.dashboard');
     })->name('seller.dashboard');
 
+    // Seller: Laporan
+    Route::get('/seller/reports', [ReportController::class, 'index'])->name('seller.reports.index');
+    Route::post('/seller/reports/print', [ReportController::class, 'print'])->name('seller.reports.print');
+
     // Seller: Kelola Produk (Halaman & Simpan Baru)
     Route::get('/seller/kelola-produk', [ProductController::class, 'kelolaProduk'])->name('seller.kelola-produk');
     Route::post('/seller/kelola-produk', [ProductController::class, 'storeProduk'])->name('seller.kelola-produk.store'); // Note: name saya perjelas agar unik

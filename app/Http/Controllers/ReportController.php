@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Product;
 use Barryvdh\DomPDF\Facade\Pdf; // Ensure composer require barryvdh/laravel-dompdf
 
 class ReportController extends Controller
@@ -119,5 +120,71 @@ class ReportController extends Controller
         }
 
         return response()->json(['products' => $rows]);
+    }
+
+    /**
+     * Seller: Show Report Selection Page
+     * GET /seller/reports
+     */
+    public function index()
+    {
+        return view('seller.reports.index');
+    }
+
+    /**
+     * Seller: Generate PDF Report
+     * POST /seller/reports/print
+     */
+    public function print(Request $request)
+    {
+        $user = auth()->user();
+        if (!$user) {
+            abort(403, 'Unauthorized');
+        }
+
+        $type = $request->input('report_type');
+        $query = Product::where('seller_id', $user->id)->withAvg('reviews', 'rating');
+        $title = 'Laporan Produk';
+
+        switch ($type) {
+            case 'stock_desc': // SRS-MartPlace-12
+                $query->orderBy('stock', 'desc');
+                $title = 'Laporan Stok Produk (Urut Stok Tertinggi)';
+                break;
+            
+            case 'rating_desc': // SRS-MartPlace-13
+                $query->orderBy('reviews_avg_rating', 'desc');
+                $title = 'Laporan Stok Produk (Urut Rating Tertinggi)';
+                break;
+
+            case 'low_stock': // SRS-MartPlace-14
+                $query->where('stock', '<', 8);
+                $title = 'Laporan Stok Menipis';
+                break;
+            
+            default:
+                $query->orderBy('stock', 'desc');
+                $title = 'Laporan Stok Produk';
+                break;
+        }
+
+        $products = $query->get();
+
+        $data = [
+            'seller' => $user,
+            'products' => $products,
+            'title' => $title
+        ];
+
+        if (!class_exists(Pdf::class)) {
+            return back()->with('error', 'Library PDF tidak ditemukan. Pastikan sudah menjalankan "composer require barryvdh/laravel-dompdf"');
+        }
+
+        try {
+            $pdf = Pdf::loadView('seller.reports.pdf', $data);
+            return $pdf->download('laporan-produk-' . now()->format('Ymd_His') . '.pdf');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal membuat PDF: ' . $e->getMessage());
+        }
     }
 }
