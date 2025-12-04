@@ -187,6 +187,7 @@
             font-weight: 600;
         }
         
+
         /* Responsive */
         @media (max-width: 768px) {
             .navbar {
@@ -226,6 +227,25 @@
             }
         }
     </style>
+    
+    <style>
+        /* Hide the native clear button for input type="search" */
+        input[type="search"]::-webkit-search-cancel-button {
+            -webkit-appearance: none; /* Remove default styling for WebKit browsers */
+            display: none; /* Hide the button */
+        }
+
+        input[type="search"]::-ms-clear {
+            display: none; /* Hide the button for Internet Explorer/Edge */
+        }
+
+        /* Also remove default 'x' button for Firefox (though it's less common for Firefox to have one by default) */
+        input[type="search"] {
+            -moz-appearance: none;
+            -webkit-appearance: none; /* For consistency across Webkit browsers */
+            appearance: none;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar">
@@ -258,40 +278,50 @@
                 <div style="margin-bottom: 15px; padding: 12px; border-radius: 8px; background: #FFEBEE; color: #721C24; font-weight: 600;">{{ session('error') }}</div>
             @endif
 
-            <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom: 15px;">
-                <div style="font-weight: 600;">Menampilkan Produk</div>
-                <div style="color:#666">Total: {{ $products->total() ?? 0 }}</div>
+            <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom: 20px;">
+                <div style="position:relative; flex-grow: 1; max-width: 450px;">
+                     <span style="position:absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #999; z-index: 2;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    </span>
+                    <input id="catalogSearch" type="search" placeholder="Cari produk di CampusMarket..." style="padding: 10px 30px 10px 40px; border: 1px solid #ddd; border-radius: 8px; width: 100%;" />
+                    <button id="clearSearch" style="position:absolute; right:10px; top:50%; transform: translateY(-50%); background:transparent; border:none; cursor:pointer; color:#999; font-size: 20px; display: none; z-index: 2;">✕</button>
+                </div>
+                <div style="color:#666">Total Produk: <span id="catalogTotal">{{ $products->total() ?? 0 }}</span></div>
             </div>
 
-            <div class="product-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px;">
-                @forelse($products as $product)
-                    <div class="product-card" style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e9e9e9;">
-                        <div class="product-image-wrapper">
-                            @php
-                                $primaryImage = isset($product->images) ? collect($product->images)->where('is_primary', true)->first() : null;
-                                $imgSrc = $primaryImage ? asset('storage/' . $primaryImage->image_path) : null;
-                            @endphp
-                            @if($imgSrc)
-                                <img src="{{ $imgSrc }}" alt="{{ $product->name }}">
-                            @else
-                                <!-- inline SVG placeholder -->
-                                <div style="display:flex;align-items:center;justify-content:center; width:100%; height:100%; background:#f0f0f0; color:#999; font-weight:600;">
-                                    Gambar Produk
-                                </div>
-                            @endif
-                        </div>
-                        <div style="font-weight:700; color:#01343B; margin-bottom:4px;">{{ $product->name }}</div>
-                        <div style="font-weight:600; color:#234; margin-bottom:8px;">Rp {{ number_format($product->price, 0, ',', '.') }}</div>
-                        <div style="font-size:12px; color:#666; margin-bottom:12px;">Stok: {{ $product->stock }}</div>
+            <div id="productGridWrapper">
+                <div id="productGrid" class="product-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px;">
+                    @forelse($products as $product)
+                        <div class="product-card" style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e9e9e9;">
+                            <div class="product-image-wrapper">
+                                @php
+                                    $primaryImage = isset($product->images) ? collect($product->images)->where('is_primary', true)->first() : null;
+                                    $imgSrc = $primaryImage ? asset('storage/' . $primaryImage->image_path) : null;
+                                @endphp
+                                @if($imgSrc)
+                                    <img src="{{ $imgSrc }}" alt="{{ $product->name }}">
+                                @else
+                                    <div style="display:flex;align-items:center;justify-content:center; width:100%; height:100%; background:#f0f0f0; color:#999; font-weight:600;">
+                                        Gambar Produk
+                                    </div>
+                                @endif
+                            </div>
+                            <div style="font-weight:700; color:#01343B; margin-bottom:4px;">{{ $product->name }}</div>
+                            <div style="font-weight:600; color:#234; margin-bottom:8px;">Rp {{ number_format($product->price, 0, ',', '.') }}</div>
+                            <div style="font-size:12px; color:#666; margin-bottom:12px;">Stok: {{ $product->stock }}</div>
 
-                        <!-- Action Buttons (Buy disabled: only show Detail) -->
-                        <div style="display:flex; gap:8px;">
-                            <a href="{{ route('product.show', $product) }}" class="btn-product-action" style="flex:1;">Detail</a>
+                            <div style="display:flex; gap:8px;">
+                                <a href="{{ route('product.show', $product) }}" class="btn-product-action" style="flex:1;">Detail</a>
+                            </div>
                         </div>
-                    </div>
-                @empty
-                    <div>Tidak ada produk untuk ditampilkan.</div>
-                @endforelse
+                    @empty
+                        <div id="noProductsMessage">Tidak ada produk untuk ditampilkan.</div>
+                    @endforelse
+                </div>
+
+                <div style="margin-top:20px; display:flex; justify-content:center; gap:8px; align-items:center;" id="catalogPagination">
+                    {{ $products->links() }}
+                </div>
             </div>
 
             <div style="margin-top:20px; display:flex; justify-content:center;">
@@ -302,4 +332,144 @@
 
     {{-- Buy flow (autopost after login) removed — only product detail display for now --}}
 </body>
-</html>
+    <script>
+        // Simple debounce helper
+        function debounce(fn, wait) {
+            let t;
+            return function (...args) {
+                clearTimeout(t);
+                t = setTimeout(() => fn.apply(this, args), wait);
+            };
+        }
+
+        (function () {
+            const input = document.getElementById('catalogSearch');
+            const clearBtn = document.getElementById('clearSearch');
+            const grid = document.getElementById('productGrid');
+            const totalEl = document.getElementById('catalogTotal');
+            const paginationWrapper = document.getElementById('catalogPagination');
+            const mainPagination = document.querySelector('.main-pagination');
+
+            // Show/hide clear button
+            input.addEventListener('input', () => {
+                clearBtn.style.display = input.value.trim() ? 'block' : 'none';
+            });
+
+            async function fetchResults(q = '', page = 1) {
+                grid.style.opacity = '0.5'; // Loading indicator
+                const url = new URL(window.location.origin + '/api/products/search');
+                if (q) url.searchParams.set('q', q);
+                url.searchParams.set('page', page);
+                url.searchParams.set('per_page', 12);
+
+                try {
+                    const res = await fetch(url.toString());
+                    if (!res.ok) return null;
+                    return res.json();
+                } finally {
+                    grid.style.opacity = '1';
+                }
+            }
+
+            function renderProducts(items) {
+                grid.innerHTML = '';
+                if (!items || items.length === 0) {
+                    grid.innerHTML = '<div id="noProductsMessage" style="grid-column: 1 / -1; text-align:center; padding: 40px 0; color: #777;">Tidak ada produk yang cocok ditemukan.</div>';
+                    return;
+                }
+                items.forEach(p => {
+                    const card = document.createElement('div');
+                    card.className = 'product-card';
+                    card.style = 'background: white; padding: 16px; border-radius: 8px; border: 1px solid #e9e9e9;';
+
+                    const imgWrap = document.createElement('div');
+                    imgWrap.className = 'product-image-wrapper';
+                    if (p.image) {
+                        const img = document.createElement('img');
+                        img.src = p.image; img.alt = p.name;
+                        imgWrap.appendChild(img);
+                    } else {
+                        const placeholder = document.createElement('div');
+                        placeholder.style = 'display:flex;align-items:center;justify-content:center; width:100%; height:100%; background:#f0f0f0; color:#999; font-weight:600;';
+                        placeholder.textContent = 'Gambar Produk';
+                        imgWrap.appendChild(placeholder);
+                    }
+
+                    const name = document.createElement('div'); name.style = 'font-weight:700; color:#01343B; margin-bottom:4px;'; name.textContent = p.name;
+                    const price = document.createElement('div'); price.style = 'font-weight:600; color:#234; margin-bottom:8px;'; price.textContent = 'Rp ' + Number(p.price).toLocaleString('id-ID');
+                    const stock = document.createElement('div'); stock.style = 'font-size:12px; color:#666; margin-bottom:12px;'; stock.textContent = 'Stok: ' + p.stock;
+
+                    const actions = document.createElement('div'); actions.style = 'display:flex; gap:8px;';
+                    const detail = document.createElement('a'); detail.href = p.slug; detail.className = 'btn-product-action'; detail.style.flex = '1'; detail.textContent = 'Detail';
+                    actions.appendChild(detail);
+
+                    card.appendChild(imgWrap);
+                    card.appendChild(name);
+                    card.appendChild(price);
+                    card.appendChild(stock);
+                    card.appendChild(actions);
+
+                    grid.appendChild(card);
+                });
+            }
+
+            function renderPagination(meta, currentQuery) {
+                paginationWrapper.innerHTML = '';
+                if (!meta || meta.last_page <= 1) {
+                    paginationWrapper.style.display = 'none';
+                    return;
+                }
+                paginationWrapper.style.display = 'flex';
+
+                const prevBtn = document.createElement('button'); prevBtn.textContent = '‹ Prev'; prevBtn.className = 'btn-product-action';
+                const nextBtn = document.createElement('button'); nextBtn.textContent = 'Next ›'; nextBtn.className = 'btn-product-action';
+                prevBtn.disabled = meta.current_page <= 1; nextBtn.disabled = meta.current_page >= meta.last_page;
+                
+                prevBtn.style.opacity = prevBtn.disabled ? '0.6' : '1';
+                nextBtn.style.opacity = nextBtn.disabled ? '0.6' : '1';
+
+                prevBtn.addEventListener('click', async () => {
+                    const res = await fetchResults(currentQuery, meta.current_page - 1);
+                    if (res) { renderProducts(res.data); renderPagination(res.meta, currentQuery); totalEl.textContent = res.meta.total; }
+                });
+                nextBtn.addEventListener('click', async () => {
+                    const res = await fetchResults(currentQuery, meta.current_page + 1);
+                    if (res) { renderProducts(res.data); renderPagination(res.meta, currentQuery); totalEl.textContent = res.meta.total; }
+                });
+
+                const info = document.createElement('div'); info.style = 'color:#666; padding:6px 10px;'; info.textContent = `Hal ${meta.current_page} dari ${meta.last_page}`;
+                paginationWrapper.appendChild(prevBtn);
+                paginationWrapper.appendChild(info);
+                paginationWrapper.appendChild(nextBtn);
+            }
+
+            const doSearch = debounce(async function () {
+                const q = input.value.trim();
+                
+                if (mainPagination) mainPagination.style.display = q ? 'none' : 'flex';
+
+                if (!q) {
+                    window.location.search = ''; // Simple reload to restore original server-rendered content
+                    return;
+                }
+                const res = await fetchResults(q, 1);
+                if (res) {
+                    renderProducts(res.data);
+                    renderPagination(res.meta, q);
+                    totalEl.textContent = res.meta.total;
+                }
+            }, 350);
+
+            input.addEventListener('input', doSearch);
+            
+            clearBtn.addEventListener('click', () => {
+                input.value = '';
+                clearBtn.style.display = 'none';
+                window.location.search = '';
+            });
+
+             // Initially hide the JS pagination wrapper
+            paginationWrapper.style.display = 'none';
+
+        })();
+    </script>

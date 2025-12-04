@@ -16,6 +16,58 @@ class ProductController extends Controller
         return view('catalog', compact('products'));
     }
 
+    /**
+     * AJAX product search for catalog
+     * GET /api/products/search?q={query}&category={category}&page={page}&per_page={per_page}
+     */
+    public function search(Request $request)
+    {
+        $q = trim((string) $request->query('q', ''));
+        $category = $request->query('category');
+        $perPage = max(6, (int) $request->query('per_page', 12));
+        $page = max(1, (int) $request->query('page', 1));
+
+        $query = Product::with('images')->orderBy('created_at', 'desc');
+
+        if ($q !== '') {
+            $query->where(function ($qb) use ($q) {
+                $qb->where('name', 'like', "%{$q}%")
+                   ->orWhere('description', 'like', "%{$q}%");
+            });
+        }
+
+        if ($category) {
+            $query->where('category', $category);
+        }
+
+        $paginator = $query->paginate($perPage, ['*'], 'page', $page);
+
+        // Map product data for JSON: include primary image url
+        $items = collect($paginator->items())->map(function ($product) {
+            $primaryImage = isset($product->images) ? collect($product->images)->where('is_primary', true)->first() : null;
+            $img = $primaryImage ? asset('storage/' . $primaryImage->image_path) : null;
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'price' => $product->price,
+                'stock' => $product->stock,
+                'category' => $product->category,
+                'image' => $img,
+                'slug' => route('product.show', $product),
+            ];
+        })->toArray();
+
+        return response()->json([
+            'data' => $items,
+            'meta' => [
+                'total' => $paginator->total(),
+                'per_page' => $paginator->perPage(),
+                'current_page' => $paginator->currentPage(),
+                'last_page' => $paginator->lastPage(),
+            ],
+        ]);
+    }
+
     public function show(Product $product)
     {
         return view('product.show', compact('product'));
