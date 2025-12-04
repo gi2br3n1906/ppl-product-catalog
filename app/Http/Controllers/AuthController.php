@@ -39,7 +39,7 @@ class AuthController extends Controller
             // Redirect berdasarkan role
             $user = Auth::user();
             if ($user->role === 'admin') {
-                return redirect()->route('admin.seller-registrations.index');
+                return redirect()->route('admin.dashboard');
             }
 
             // If a redirect param exists (from guest 'buy' flow), redirect there.

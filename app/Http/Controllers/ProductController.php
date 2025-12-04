@@ -12,6 +12,15 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
+        // Redirect user yang sudah login ke dashboard masing-masing
+        if (auth()->check()) {
+            $user = auth()->user();
+            if ($user->role === 'admin') {
+                return redirect()->route('admin.dashboard');
+            }
+            return redirect()->route('seller.dashboard');
+        }
+
         $products = Product::with('images')->orderBy('created_at', 'desc')->paginate(12);
         return view('catalog', compact('products'));
     }
