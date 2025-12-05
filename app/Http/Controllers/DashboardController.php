@@ -109,14 +109,35 @@ class DashboardController extends Controller
      */
     public function getLocationData(Request $request)
     {
-        // Saat ini kita belum menyimpan data lokasi (provinsi) dari reviewer (pengunjung).
-        // Jadi kita kembalikan data kosong agar tidak menyesatkan dengan dummy data.
-        // Nanti jika fitur checkout sudah ada dan menyimpan alamat pembeli, query ini bisa disesuaikan.
+        $user = auth()->user();
+        $productId = $request->query('product_id');
+
+        // Query data lokasi dari product_reviews
+        $query = DB::table('product_reviews')
+            ->join('products', 'product_reviews.product_id', '=', 'products.id')
+            ->select('product_reviews.provinsi', DB::raw('COUNT(*) as total'))
+            ->where('products.seller_id', $user->id);
+
+        // Filter berdasarkan produk jika ada
+        if ($productId) {
+            $query->where('products.id', $productId);
+        }
+
+        // Group by provinsi dan urutkan dari yang terbanyak
+        $rows = $query->groupBy('product_reviews.provinsi')
+            ->orderByDesc('total')
+            ->get();
+
+        $labels = $rows->pluck('provinsi')->toArray();
+        $data = $rows->pluck('total')->map(fn($v) => (int)$v)->toArray();
         
+        // Cek apakah ada data
+        $hasData = !empty($data) && array_sum($data) > 0;
+
         return response()->json([
-            'labels' => [], 
-            'data' => [], 
-            'hasData' => false
+            'labels' => $labels, 
+            'data' => $data, 
+            'hasData' => $hasData
         ]);
     }
 

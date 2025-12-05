@@ -16,6 +16,7 @@ class ProductReview extends Model
         'reviewer_name',
         'reviewer_phone',
         'reviewer_email',
+        'provinsi',
         'rating',
         'comment',
         'email_sent',
