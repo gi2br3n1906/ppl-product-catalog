@@ -27,26 +27,48 @@ class ProductController extends Controller
 
     /**
      * AJAX product search for catalog
-     * GET /api/products/search?q={query}&category={category}&page={page}&per_page={per_page}
+     * GET /api/products/search?q={query}&category={category}&store={store}&province={province}&city={city}&page={page}&per_page={per_page}
      */
     public function search(Request $request)
     {
         $q = trim((string) $request->query('q', ''));
         $category = $request->query('category');
+        $store = trim((string) $request->query('store', ''));
+        $province = $request->query('province');
+        $city = $request->query('city');
         $perPage = max(6, (int) $request->query('per_page', 12));
         $page = max(1, (int) $request->query('page', 1));
 
-        $query = Product::with('images')->orderBy('created_at', 'desc');
+        $query = Product::with(['images', 'seller'])
+            ->join('users', 'products.seller_id', '=', 'users.id')
+            ->leftJoin('seller_registrations', 'seller_registrations.email_pic', '=', 'users.email')
+            ->select('products.*')
+            ->orderBy('products.created_at', 'desc');
 
         if ($q !== '') {
             $query->where(function ($qb) use ($q) {
-                $qb->where('name', 'like', "%{$q}%")
-                   ->orWhere('description', 'like', "%{$q}%");
+                $qb->where('products.name', 'like', "%{$q}%")
+                   ->orWhere('products.description', 'like', "%{$q}%");
             });
         }
 
         if ($category) {
-            $query->where('category', $category);
+            $query->where('products.category', $category);
+        }
+
+        // Filter berdasarkan nama toko
+        if ($store !== '') {
+            $query->where('seller_registrations.nama_toko', 'like', "%{$store}%");
+        }
+
+        // Filter berdasarkan provinsi
+        if ($province) {
+            $query->where('seller_registrations.provinsi', $province);
+        }
+
+        // Filter berdasarkan kabupaten/kota
+        if ($city) {
+            $query->where('seller_registrations.kab_kota', $city);
         }
 
         $paginator = $query->paginate($perPage, ['*'], 'page', $page);
@@ -79,6 +101,8 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
+        // Load seller dan registrasi seller untuk mendapatkan info toko
+        $product->load(['seller', 'seller.sellerRegistration']);
         return view('product.show', compact('product'));
     }
 

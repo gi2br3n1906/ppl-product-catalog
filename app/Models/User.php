@@ -46,4 +46,12 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Relasi ke SellerRegistration
+     */
+    public function sellerRegistration()
+    {
+        return $this->hasOne(SellerRegistration::class, 'email_pic', 'email');
+    }
 }

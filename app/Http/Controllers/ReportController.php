@@ -158,8 +158,8 @@ class ReportController extends Controller
                 break;
 
             case 'low_stock': // SRS-MartPlace-14
-                $query->where('stock', '<', 8);
-                $title = 'Laporan Stok Menipis';
+                $query->where('stock', '<', 2);
+                $title = 'Laporan Stok Menipis (Stock < 2)';
                 break;
             
             default:

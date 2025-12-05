@@ -26,6 +26,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 3px solid #ACEB02;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
@@ -190,7 +191,6 @@
 <body>
     <nav class="navbar">
         <a href="{{ route('catalog') }}" class="navbar-brand">CampusMarket</a>
-        
         <div class="navbar-right">
             @auth
                 <div class="user-info">
@@ -202,6 +202,7 @@
                 </div>
             @else
                 <a href="{{ route('login') }}" class="btn-login">Login</a>
+                <a href="{{ route('seller.register.form') }}" class="btn-register">Daftar Seller</a>
             @endauth
         </div>
     </nav>
@@ -241,6 +242,21 @@
                 <div class="product-price">Rp {{ number_format($product->price, 0, ',', '.') }}</div>
                 <div class="product-stock">Stok: {{ $product->stock }}</div>
                 <p class="product-description">{{ $product->description }}</p>
+                
+                @php
+                    $sellerReg = $product->seller?->sellerRegistration;
+                @endphp
+                
+                @if($sellerReg)
+                    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e5e7eb;">
+                        <div style="font-size: 14px; color: #666; margin-bottom: 6px;">
+                            <strong style="color: #01343B;">Toko:</strong> {{ $sellerReg->nama_toko }}
+                        </div>
+                        <div style="font-size: 14px; color: #666;">
+                            <strong style="color: #01343B;">Lokasi:</strong> {{ $sellerReg->kab_kota }}, {{ $sellerReg->provinsi }}
+                        </div>
+                    </div>
+                @endif
 
                 <!-- Buy flow removed: showing detail only -->
             </div>

@@ -278,15 +278,46 @@
                 <div style="margin-bottom: 15px; padding: 12px; border-radius: 8px; background: #FFEBEE; color: #721C24; font-weight: 600;">{{ session('error') }}</div>
             @endif
 
-            <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom: 20px;">
-                <div style="position:relative; flex-grow: 1; max-width: 450px;">
-                     <span style="position:absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #999; z-index: 2;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    </span>
-                    <input id="catalogSearch" type="search" placeholder="Cari produk di CampusMarket..." style="padding: 10px 30px 10px 40px; border: 1px solid #ddd; border-radius: 8px; width: 100%;" />
-                    <button id="clearSearch" style="position:absolute; right:10px; top:50%; transform: translateY(-50%); background:transparent; border:none; cursor:pointer; color:#999; font-size: 20px; display: none; z-index: 2;">✕</button>
+            <!-- Filter dan Pencarian -->
+            <div style="background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px;">
+                    <!-- Pencarian Produk -->
+                    <div style="position:relative;">
+                        <label style="display: block; font-size: 12px; color: #666; margin-bottom: 5px; font-weight: 600;">Cari Produk</label>
+                        <span style="position:absolute; left: 12px; top: 35px; color: #999; z-index: 2;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        </span>
+                        <input id="catalogSearch" type="search" placeholder="Nama produk..." style="padding: 8px 30px 8px 35px; border: 1px solid #ddd; border-radius: 8px; width: 100%; font-size: 14px;" />
+                        <button id="clearSearch" style="position:absolute; right:10px; top:35px; background:transparent; border:none; cursor:pointer; color:#999; font-size: 18px; display: none; z-index: 2;">✕</button>
+                    </div>
+
+                    <!-- Filter Nama Toko -->
+                    <div>
+                        <label style="display: block; font-size: 12px; color: #666; margin-bottom: 5px; font-weight: 600;">Nama Toko</label>
+                        <input id="storeFilter" type="text" placeholder="Cari nama toko..." style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; width: 100%; font-size: 14px;" />
+                    </div>
+
+                    <!-- Filter Provinsi -->
+                    <div>
+                        <label style="display: block; font-size: 12px; color: #666; margin-bottom: 5px; font-weight: 600;">Provinsi</label>
+                        <select id="provinceFilter" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; width: 100%; font-size: 14px;">
+                            <option value="">Semua Provinsi</option>
+                        </select>
+                    </div>
+
+                    <!-- Filter Kabupaten/Kota -->
+                    <div>
+                        <label style="display: block; font-size: 12px; color: #666; margin-bottom: 5px; font-weight: 600;">Kabupaten/Kota</label>
+                        <select id="cityFilter" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; width: 100%; font-size: 14px;">
+                            <option value="">Semua Kab/Kota</option>
+                        </select>
+                    </div>
                 </div>
-                <div style="color:#666">Total Produk: <span id="catalogTotal">{{ $products->total() ?? 0 }}</span></div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <button id="resetFilters" style="padding: 8px 16px; background: #6b7280; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600;">Reset Filter</button>
+                    <div style="color:#666; font-weight: 600;">Total Produk: <span id="catalogTotal">{{ $products->total() ?? 0 }}</span></div>
+                </div>
             </div>
 
             <div id="productGridWrapper">
@@ -344,21 +375,74 @@
 
         (function () {
             const input = document.getElementById('catalogSearch');
+            const storeFilter = document.getElementById('storeFilter');
+            const provinceFilter = document.getElementById('provinceFilter');
+            const cityFilter = document.getElementById('cityFilter');
+            const resetBtn = document.getElementById('resetFilters');
             const clearBtn = document.getElementById('clearSearch');
             const grid = document.getElementById('productGrid');
             const totalEl = document.getElementById('catalogTotal');
             const paginationWrapper = document.getElementById('catalogPagination');
-            const mainPagination = document.querySelector('.main-pagination');
+
+            // Load provinces
+            async function loadProvinces() {
+                try {
+                    const res = await fetch('/api/wilayah/provinsi');
+                    const data = await res.json();
+                    data.forEach(item => {
+                        const opt = document.createElement('option');
+                        opt.value = item.name;
+                        opt.textContent = item.name;
+                        provinceFilter.appendChild(opt);
+                    });
+                } catch (e) {
+                    console.error('Failed to load provinces:', e);
+                }
+            }
+
+            // Load cities when province changes
+            provinceFilter.addEventListener('change', async function() {
+                cityFilter.innerHTML = '<option value="">Semua Kab/Kota</option>';
+                if (!this.value) return;
+                
+                try {
+                    // Find province ID
+                    const provRes = await fetch('/api/wilayah/provinsi');
+                    const provData = await provRes.json();
+                    const province = provData.find(p => p.name === this.value);
+                    
+                    if (province) {
+                        const res = await fetch(`/api/wilayah/kabupaten?provinsi_id=${province.id}`);
+                        const data = await res.json();
+                        data.forEach(item => {
+                            const opt = document.createElement('option');
+                            opt.value = item.name;
+                            opt.textContent = item.name;
+                            cityFilter.appendChild(opt);
+                        });
+                    }
+                } catch (e) {
+                    console.error('Failed to load cities:', e);
+                }
+                
+                doSearch();
+            });
+
+            // Load initial data
+            loadProvinces();
 
             // Show/hide clear button
             input.addEventListener('input', () => {
                 clearBtn.style.display = input.value.trim() ? 'block' : 'none';
             });
 
-            async function fetchResults(q = '', page = 1) {
+            async function fetchResults(q = '', store = '', province = '', city = '', page = 1) {
                 grid.style.opacity = '0.5'; // Loading indicator
                 const url = new URL(window.location.origin + '/api/products/search');
                 if (q) url.searchParams.set('q', q);
+                if (store) url.searchParams.set('store', store);
+                if (province) url.searchParams.set('province', province);
+                if (city) url.searchParams.set('city', city);
                 url.searchParams.set('page', page);
                 url.searchParams.set('per_page', 12);
 
@@ -413,7 +497,7 @@
                 });
             }
 
-            function renderPagination(meta, currentQuery) {
+            function renderPagination(meta, currentQuery, currentStore, currentProvince, currentCity) {
                 paginationWrapper.innerHTML = '';
                 if (!meta || meta.last_page <= 1) {
                     paginationWrapper.style.display = 'none';
@@ -429,12 +513,12 @@
                 nextBtn.style.opacity = nextBtn.disabled ? '0.6' : '1';
 
                 prevBtn.addEventListener('click', async () => {
-                    const res = await fetchResults(currentQuery, meta.current_page - 1);
-                    if (res) { renderProducts(res.data); renderPagination(res.meta, currentQuery); totalEl.textContent = res.meta.total; }
+                    const res = await fetchResults(currentQuery, currentStore, currentProvince, currentCity, meta.current_page - 1);
+                    if (res) { renderProducts(res.data); renderPagination(res.meta, currentQuery, currentStore, currentProvince, currentCity); totalEl.textContent = res.meta.total; }
                 });
                 nextBtn.addEventListener('click', async () => {
-                    const res = await fetchResults(currentQuery, meta.current_page + 1);
-                    if (res) { renderProducts(res.data); renderPagination(res.meta, currentQuery); totalEl.textContent = res.meta.total; }
+                    const res = await fetchResults(currentQuery, currentStore, currentProvince, currentCity, meta.current_page + 1);
+                    if (res) { renderProducts(res.data); renderPagination(res.meta, currentQuery, currentStore, currentProvince, currentCity); totalEl.textContent = res.meta.total; }
                 });
 
                 const info = document.createElement('div'); info.style = 'color:#666; padding:6px 10px;'; info.textContent = `Hal ${meta.current_page} dari ${meta.last_page}`;
@@ -445,25 +529,37 @@
 
             const doSearch = debounce(async function () {
                 const q = input.value.trim();
+                const store = storeFilter.value.trim();
+                const province = provinceFilter.value;
+                const city = cityFilter.value;
                 
-                if (mainPagination) mainPagination.style.display = q ? 'none' : 'flex';
-
-                if (!q) {
+                if (!q && !store && !province && !city) {
                     window.location.search = ''; // Simple reload to restore original server-rendered content
                     return;
                 }
-                const res = await fetchResults(q, 1);
+                const res = await fetchResults(q, store, province, city, 1);
                 if (res) {
                     renderProducts(res.data);
-                    renderPagination(res.meta, q);
+                    renderPagination(res.meta, q, store, province, city);
                     totalEl.textContent = res.meta.total;
                 }
             }, 350);
 
             input.addEventListener('input', doSearch);
+            storeFilter.addEventListener('input', debounce(doSearch, 500));
+            cityFilter.addEventListener('change', doSearch);
             
             clearBtn.addEventListener('click', () => {
                 input.value = '';
+                clearBtn.style.display = 'none';
+                doSearch();
+            });
+
+            resetBtn.addEventListener('click', () => {
+                input.value = '';
+                storeFilter.value = '';
+                provinceFilter.value = '';
+                cityFilter.innerHTML = '<option value="">Semua Kab/Kota</option>';
                 clearBtn.style.display = 'none';
                 window.location.search = '';
             });

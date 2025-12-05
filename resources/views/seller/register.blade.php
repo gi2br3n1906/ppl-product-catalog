@@ -391,24 +391,6 @@
 
             <div class="form-row">
                 <div class="form-group">
-<<<<<<< HEAD
-=======
-                    <label for="kab_kota">Kabupaten/Kota <span class="required">*</span></label>
-                    <input 
-                        type="text" 
-                        id="kab_kota" 
-                        name="kab_kota" 
-                        value="{{ old('kab_kota') }}" 
-                        placeholder="Kabupaten/Kota"
-                        required
-                    >
-                    @error('kab_kota')
-                        <div class="error-message">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="form-group">
->>>>>>> origin
                     <label for="provinsi">Provinsi <span class="required">*</span></label>
                     <select id="provinsi" name="provinsi" required>
                         <option value="">Pilih Provinsi</option>
