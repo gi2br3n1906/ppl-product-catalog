@@ -675,13 +675,13 @@
                 
                 const config = chartConfigs[chartType];
                 
-                // Custom Color Logic untuk Stock < 8
+                // Custom Color Logic untuk Stock < 2
                 let datasetBackgroundColor = config.backgroundColor;
                 let datasetBorderColor = config.borderColor;
 
                 if (chartType === 'stock') {
-                    datasetBackgroundColor = data.map(val => val < 8 ? 'rgba(220, 53, 69, 0.8)' : config.backgroundColor);
-                    datasetBorderColor = data.map(val => val < 8 ? 'rgba(220, 53, 69, 1)' : config.borderColor);
+                    datasetBackgroundColor = data.map(val => val < 2 ? 'rgba(220, 53, 69, 0.8)' : config.backgroundColor);
+                    datasetBorderColor = data.map(val => val < 2 ? 'rgba(220, 53, 69, 1)' : config.borderColor);
                 }
                 
                 // Konfigurasi Chart.js

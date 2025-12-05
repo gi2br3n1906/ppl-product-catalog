@@ -58,33 +58,15 @@ class DashboardController extends Controller
      */
     public function getStockData()
     {
-        // Contoh query untuk mendapatkan stok per produk
-        // $stockData = DB::table('products')
-        //     ->select('name', 'stock')
-        //     ->where('seller_id', auth()->id())
-        //     ->get();
+        $user = auth()->user();
+        
+        // Ambil data stok real dari database
+        $products = Product::where('seller_id', $user->id)
+            ->select('name', 'stock')
+            ->get();
 
-        // Dummy data (40 items untuk demo cramp)
-        $labels = [
-            'Buku Tulis', 'Pulpen Hitam', 'Penggaris 30cm', 'Penghapus', 'Pensil 2B', 
-            'Spidol Warna', 'Kertas HVS A4', 'Stapler Kecil', 'Lem Kertas', 'Gunting',
-            'Map Plastik', 'Binder B5', 'Isi Binder', 'Correction Tape', 'Sticky Notes',
-            'Kalkulator', 'Jangka', 'Busur Derajat', 'Cutter', 'Lakban Bening',
-            'Klip Kertas', 'Amplop Coklat', 'Amplop Putih', 'Tinta Printer', 'Kertas Foto',
-            'Buku Gambar A3', 'Krayon 12 Warna', 'Pensil Warna', 'Rautan Pensil', 'Tempat Pensil',
-            'Papan Ujian', 'Kertas Kado', 'Pita Perekat', 'Double Tape', 'Lem Tembak',
-            'Isi Staples', 'Buku Agenda', 'Kalender Meja', 'Whiteboard Marker', 'Penghapus Papan'
-        ];
-        $data = [
-            150, 200, 75, 120, 180, 
-            95, 300, 60, 85, 110,
-            140, 55, 210, 90, 130,
-            45, 70, 65, 100, 160,
-            200, 150, 120, 40, 5,
-            90, 65, 110, 130, 75,
-            100, 180, 140, 95, 3,
-            2, 60, 30, 120, 85
-        ];
+        $labels = $products->pluck('name')->toArray();
+        $data = $products->pluck('stock')->toArray();
         
         // Cek apakah ada data
         $hasData = !empty($data) && array_sum($data) > 0;
@@ -102,24 +84,19 @@ class DashboardController extends Controller
      */
     public function getRatingData()
     {
-        // Contoh query untuk mendapatkan rata-rata rating per produk
-        // $ratingData = DB::table('products')
-        //     ->leftJoin('reviews', 'products.id', '=', 'reviews.product_id')
-        //     ->select('products.name', DB::raw('AVG(reviews.rating) as avg_rating'))
-        //     ->where('products.seller_id', auth()->id())
-        //     ->groupBy('products.id', 'products.name')
-        //     ->get();
+        $user = auth()->user();
 
-        // Real query: average rating per product (global)
+        // Real query: average rating per product milik seller
         $ratingRows = DB::table('products')
             ->leftJoin('product_reviews', 'products.id', '=', 'product_reviews.product_id')
-            ->select('products.id', 'products.name', DB::raw('AVG(product_reviews.rating) as avg_rating'))
+            ->select('products.name', DB::raw('AVG(product_reviews.rating) as avg_rating'))
+            ->where('products.seller_id', $user->id)
             ->groupBy('products.id', 'products.name')
             ->orderByDesc('avg_rating')
-            ->limit(40)
             ->get();
 
         $labels = $ratingRows->pluck('name')->toArray();
+        // Jika belum ada rating, avg_rating akan null, kita set jadi 0
         $data = $ratingRows->map(fn($r) => round((float)$r->avg_rating, 2))->toArray();
         $hasData = !empty($data) && array_sum($data) > 0;
 
@@ -132,39 +109,15 @@ class DashboardController extends Controller
      */
     public function getLocationData(Request $request)
     {
-        $productId = $request->query('product_id');
+        // Saat ini kita belum menyimpan data lokasi (provinsi) dari reviewer (pengunjung).
+        // Jadi kita kembalikan data kosong agar tidak menyesatkan dengan dummy data.
+        // Nanti jika fitur checkout sudah ada dan menyimpan alamat pembeli, query ini bisa disesuaikan.
         
-        // Contoh query untuk mendapatkan sebaran pemberi rating per provinsi untuk produk tertentu
-        // if ($productId) {
-        //     $locationData = DB::table('reviews')
-        //         ->join('users', 'reviews.user_id', '=', 'users.id')
-        //         ->join('products', 'reviews.product_id', '=', 'products.id')
-        //         ->select('users.province', DB::raw('COUNT(*) as total'))
-        //         ->where('products.id', $productId)
-        //         ->where('products.seller_id', auth()->id())
-        //         ->groupBy('users.province')
-        //         ->get();
-        // }
-
-        $query = DB::table('product_reviews')
-            ->join('products', 'product_reviews.product_id', '=', 'products.id')
-            ->join('users', 'products.seller_id', '=', 'users.id')
-            ->leftJoin('seller_registrations', 'users.email', '=', 'seller_registrations.email_pic')
-            ->select('seller_registrations.provinsi as province', DB::raw('COUNT(DISTINCT product_reviews.reviewer_email) as total'))
-            ->whereNotNull('seller_registrations.provinsi')
-            ->groupBy('seller_registrations.provinsi')
-            ->orderByDesc('total');
-
-        if ($productId) {
-            $query->where('products.id', $productId);
-        }
-
-        $rows = $query->get();
-        $labels = $rows->pluck('province')->toArray();
-        $data = $rows->pluck('total')->map(fn($v) => (int)$v)->toArray();
-        $hasData = !empty($data) && array_sum($data) > 0;
-
-        return response()->json(['labels' => $labels, 'data' => $data, 'hasData' => $hasData]);
+        return response()->json([
+            'labels' => [], 
+            'data' => [], 
+            'hasData' => false
+        ]);
     }
 
     /**
@@ -173,19 +126,12 @@ class DashboardController extends Controller
      */
     public function getProducts()
     {
-        // Contoh query untuk mendapatkan produk milik seller yang sedang login
-        // $products = Product::where('seller_id', auth()->id())
-        //     ->select('id', 'name')
-        //     ->get();
-
-        // Dummy data
-        $products = [
-            ['id' => 1, 'name' => 'Buku Tulis Spiral A5'],
-            ['id' => 2, 'name' => 'Pulpen Hitam 0.5mm'],
-            ['id' => 3, 'name' => 'Penggaris 30cm'],
-            ['id' => 4, 'name' => 'Penghapus Putih'],
-            ['id' => 5, 'name' => 'Pensil 2B (Pack 12)'],
-        ];
+        $user = auth()->user();
+        
+        $products = Product::where('seller_id', $user->id)
+            ->select('id', 'name')
+            ->orderBy('name')
+            ->get();
 
         return response()->json([
             'products' => $products
@@ -220,21 +166,22 @@ class DashboardController extends Controller
     }
 
     /**
-     * Mengembalikan daftar produk dengan stok menipis (< 8)
+     * Mengembalikan daftar produk dengan stok menipis (< 2)
      * GET /api/dashboard/low-stock
      */
     public function getLowStockProducts()
     {
-        // Dummy data sesuai dengan getStockData
-        // Kita tambahkan beberapa dummy data lagi untuk demo
-        $lowStockProducts = [
-            ['name' => 'Lem Tembak', 'stock' => 3],
-            ['name' => 'Kertas Foto', 'stock' => 5],
-            ['name' => 'Isi Staples', 'stock' => 2],
-        ];
+        $user = auth()->user();
+        
+        // Ambil produk dengan stok < 2 milik seller
+        $products = Product::where('seller_id', $user->id)
+            ->where('stock', '<', 2)
+            ->select('name', 'stock')
+            ->orderBy('stock', 'asc')
+            ->get();
 
         return response()->json([
-            'products' => $lowStockProducts
+            'products' => $products
         ]);
     }
 
