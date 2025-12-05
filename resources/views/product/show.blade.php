@@ -313,6 +313,13 @@
                             @error('reviewer_email')<div style="color:#c00; font-size:13px;">{{ $message }}</div>@enderror
                         </div>
                         <div style="margin-bottom:12px;">
+                            <label for="provinsi" style="font-weight:500;">Provinsi</label><br>
+                            <select name="provinsi" id="provinsi" required style="width:100%; padding:8px; border-radius:6px; border:1px solid #ccc;">
+                                <option value="">Pilih Provinsi</option>
+                            </select>
+                            @error('provinsi')<div style="color:#c00; font-size:13px;">{{ $message }}</div>@enderror
+                        </div>
+                        <div style="margin-bottom:12px;">
                             <label for="rating" style="font-weight:500;">Rating (1-5)</label><br>
                             <select name="rating" id="rating" required style="width:100%; padding:8px; border-radius:6px; border:1px solid #ccc;">
                                 <option value="">Pilih rating</option>
@@ -335,5 +342,24 @@
                 </div>
             </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const provinceSelect = document.getElementById('provinsi');
+            
+            // Load provinces
+            fetch('/api/wilayah/provinsi')
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.name;
+                        option.textContent = item.name;
+                        provinceSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error loading provinces:', error));
+        });
+    </script>
 </body>
 </html>

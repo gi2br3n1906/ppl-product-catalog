@@ -113,6 +113,7 @@ class ProductController extends Controller
             'reviewer_name' => 'required|string|max:100',
             'reviewer_phone' => 'required|string|max:20',
             'reviewer_email' => 'required|email|max:100',
+            'provinsi' => 'required|string|max:100',
             'rating' => 'required|integer|min:1|max:5',
             'comment' => 'nullable|string|max:1000',
         ]);
@@ -121,6 +122,7 @@ class ProductController extends Controller
             'reviewer_name' => $request->reviewer_name,
             'reviewer_phone' => $request->reviewer_phone,
             'reviewer_email' => $request->reviewer_email,
+            'provinsi' => $request->provinsi,
             'rating' => $request->rating,
             'comment' => $request->comment,
         ]);
