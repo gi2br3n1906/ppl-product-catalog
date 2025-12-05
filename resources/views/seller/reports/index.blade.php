@@ -211,7 +211,7 @@
                                 <input type="radio" name="report_type" value="low_stock">
                                 <div class="option-content">
                                     <h3>Laporan Stok Menipis</h3>
-                                    <p>Menampilkan daftar produk yang harus segera dipesan (stok < 8).</p>
+                                    <p>Menampilkan daftar produk yang harus segera dipesan (stok < 2).</p>
                                 </div>
                             </label>
                         </div>
