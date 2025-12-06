@@ -243,6 +243,9 @@
                             </div>
                         </div>
                         <div class="produk-actions">
+                            <a href="{{ route('product.show', $product->id) }}" target="_blank" class="btn-action btn-preview" style="background: #e0f2fe; color: #0284c7; grid-column: span 2;">
+                                Preview
+                            </a>
                             <button type="button" 
                                 class="btn-action btn-edit btn-open-edit"
                                 data-id="{{ $product->id }}"
@@ -444,6 +447,20 @@
                 alert('Terjadi kesalahan sistem.');
             });
         }
+
+        // --- AUTO OPEN EDIT MODAL IF QUERY PARAM EXISTS ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const editId = urlParams.get('edit_id');
+            if (editId) {
+                const targetBtn = document.querySelector(`.btn-open-edit[data-id="${editId}"]`);
+                if (targetBtn) {
+                    targetBtn.click();
+                    // Clean URL so refresh doesn't reopen
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+            }
+        });
     </script>
 </body>
 </html>
