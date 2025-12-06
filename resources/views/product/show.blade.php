@@ -186,6 +186,31 @@
             text-decoration: underline;
         }
 
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.2);
+            color: white;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+            user-select: none;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+        }
+        .nav-btn:hover {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .prev-btn { left: 10px; }
+        .next-btn { right: 10px; }
+
     </style>
 </head>
 <body>
@@ -208,7 +233,29 @@
     </nav>
 
     <div class="container">
-        <a href="{{ route('catalog') }}" class="back-link">&larr; Kembali ke Katalog</a>
+        @if(Auth::check() && Auth::id() == $product->seller_id)
+            <a href="{{ route('seller.kelola-produk') }}" class="back-link">&larr; Kembali ke Kelola Produk</a>
+        @else
+            <a href="{{ route('catalog') }}" class="back-link">&larr; Kembali ke Katalog</a>
+        @endif
+
+        @if(Auth::check() && Auth::id() == $product->seller_id)
+            <div style="margin-bottom: 20px; padding: 15px; background: #ecfdf5; border: 1px solid #10b981; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <strong style="color: #065f46; display: block; margin-bottom: 4px;">Preview Mode</strong>
+                    <span style="font-size: 13px; color: #047857;">Ini adalah tampilan produk Anda di mata pembeli.</span>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <a href="{{ route('seller.kelola-produk', ['edit_id' => $product->id]) }}" style="background: #01343B; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">Edit Produk</a>
+                    
+                    <form action="{{ route('seller.produk.destroy', $product->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus produk ini?');" style="display: inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" style="background: #ef4444; color: white; padding: 8px 16px; border-radius: 6px; border: none; font-weight: 600; font-size: 14px; cursor: pointer;">Hapus Produk</button>
+                    </form>
+                </div>
+            </div>
+        @endif
 
         <div class="product-detail-card">
             <div class="product-image-container">
@@ -224,14 +271,27 @@
                 <div id="mainImageContainer" style="width:100%; height:320px; display:flex; align-items:center; justify-content:center; background:#f0f0f0; border-radius:6px; position:relative; overflow:hidden;">
                     @if($allImages->count() > 0)
                         <img id="mainProductImage" src="{{ asset('storage/' . ltrim($allImages->first()->image_path, '/')) }}" alt="{{ $product->name }}" class="product-image" style="max-height:100%; max-width:100%; object-fit:contain;">
+                        
+                        @if($allImages->count() > 1)
+                            <button class="nav-btn prev-btn" onclick="changeImage(-1)">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                            </button>
+                            <button class="nav-btn next-btn" onclick="changeImage(1)">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                            </button>
+                        @endif
                     @else
                         <div style="color:#999; font-weight:600;">Gambar Produk</div>
                     @endif
                 </div>
                 @if($allImages->count() > 1)
                     <div style="display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; justify-content:center;">
-                        @foreach($allImages as $img)
-                            <img src="{{ asset('storage/' . ltrim($img->image_path, '/')) }}" alt="Gambar {{ $product->name }}" class="thumb-img" style="width:70px; height:70px; object-fit:cover; border-radius:6px; border:2px solid #eee; background:#fafafa; cursor:pointer; transition:border 0.2s;" onclick="document.getElementById('mainProductImage').src=this.src">
+                        @foreach($allImages as $index => $img)
+                            <img src="{{ asset('storage/' . ltrim($img->image_path, '/')) }}" 
+                                 alt="Gambar {{ $product->name }}" 
+                                 class="thumb-img" 
+                                 style="width:70px; height:70px; object-fit:cover; border-radius:6px; border:2px solid #eee; background:#fafafa; cursor:pointer; transition:border 0.2s;" 
+                                 onclick="setImage({{ $index }})">
                         @endforeach
                     </div>
                 @endif
@@ -360,6 +420,45 @@
                 })
                 .catch(error => console.error('Error loading provinces:', error));
         });
+
+        // Image Gallery Logic
+        const productImages = [
+            @if(isset($allImages) && $allImages->count() > 0)
+                @foreach($allImages as $img)
+                    "{{ asset('storage/' . ltrim($img->image_path, '/')) }}",
+                @endforeach
+            @endif
+        ];
+        
+        let currentImageIndex = 0;
+
+        function changeImage(direction) {
+            if (productImages.length <= 1) return;
+            
+            currentImageIndex += direction;
+            
+            if (currentImageIndex < 0) {
+                currentImageIndex = productImages.length - 1;
+            } else if (currentImageIndex >= productImages.length) {
+                currentImageIndex = 0;
+            }
+            
+            updateMainImage();
+        }
+
+        function setImage(index) {
+            if (index >= 0 && index < productImages.length) {
+                currentImageIndex = index;
+                updateMainImage();
+            }
+        }
+
+        function updateMainImage() {
+            const imgElement = document.getElementById('mainProductImage');
+            if (imgElement && productImages.length > 0) {
+                imgElement.src = productImages[currentImageIndex];
+            }
+        }
     </script>
 </body>
 </html>
