@@ -73,45 +73,56 @@
         </div>
 
         <div class="main-grid">
-            <div>
+            <div style="display: flex; flex-direction: column; gap: 24px;">
+                <!-- Top: Wide Chart (Sellers by Province) -->
                 <div class="chart-card">
-                    <div class="chart-header-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-                        <div>
-                            <div class="card-title">Products by Category</div>
-                            <p style="color:#6b7280; font-size:13px;">Sebaran produk berdasarkan kategori.</p>
-                        </div>
-                        <div>
-                            <select id="categoryFilter">
-                                <option value="">Semua Kategori</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div style="height:270px;">
-                        <canvas id="chartCategory"></canvas>
-                    </div>
-                </div>
-                <div class="chart-card" style="margin-top: 20px;">
                     <div class="chart-header-row">
                         <div>
                             <div class="card-title">Sellers by Province</div>
                             <p style="color:#6b7280; font-size:13px;">Distribusi seller berdasarkan provinsi.</p>
                         </div>
                     </div>
-                    <div style="height:270px;">
+                    <div style="height:300px; position: relative;">
                         <canvas id="chartProvince"></canvas>
                     </div>
                 </div>
-                <div class="chart-card" style="margin-top: 20px;">
-                    <div class="chart-header-row">
-                        <div>
-                            <div class="card-title">Active vs Inactive Sellers</div>
+
+                <!-- Bottom: Two Smaller Charts Side-by-Side -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+                    <!-- Left: Category Distribution -->
+                    <div class="chart-card" style="min-height: 380px;">
+                        <div class="chart-header-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                            <div>
+                                <div class="card-title">Products by Category</div>
+                                <p style="color:#6b7280; font-size:13px;">Sebaran produk per kategori.</p>
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 12px;">
+                            <select id="categoryFilter" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #d1d5db;">
+                                <option value="">Semua Kategori</option>
+                            </select>
+                        </div>
+                        <div style="height:220px; position: relative; display: flex; justify-content: center;">
+                            <canvas id="chartCategory"></canvas>
                         </div>
                     </div>
-                    <div style="height:220px;">
-                        <canvas id="chartActive"></canvas>
+
+                    <!-- Right: Active vs Inactive -->
+                    <div class="chart-card" style="min-height: 380px;">
+                        <div class="chart-header-row">
+                            <div>
+                                <div class="card-title">Seller Status</div>
+                                <p style="color:#6b7280; font-size:13px;">Perbandingan status seller.</p>
+                            </div>
+                        </div>
+                        <div style="height:220px; position: relative; display: flex; justify-content: center; margin-top: 20px;">
+                            <canvas id="chartActive"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Right Sidebar -->
             <div>
                 <div class="best-sellers-card">
                     <div class="card-title">Top Rated Products</div>
@@ -200,10 +211,43 @@
                     // Filter to chosen category
                     const idx = cat.labels.indexOf(val);
                     if (idx >= 0) {
-                        const labels = [cat.labels[idx]];
-                        const data = [cat.data[idx]];
+                        const total = cat.data[idx];
+                        const categoryName = cat.labels[idx];
+                        
+                        // Generate fake segments for visual separation
+                        const maxSegments = 50; 
+                        const segmentCount = Math.min(total, maxSegments);
+                        
+                        const labels = Array(segmentCount).fill(categoryName);
+                        const data = Array(segmentCount).fill(1);
+                        
+                        // Generate random pastel colors
+                        const colors = [];
+                        for(let i=0; i<segmentCount; i++) {
+                            const hue = Math.floor(Math.random() * 360);
+                            colors.push(`hsl(${hue}, 70%, 60%)`);
+                        }
+
                         categoryChart.destroy();
-                        categoryChart = renderChart(document.getElementById('chartCategory'), 'doughnut', { labels: labels, datasets: [{ data: data, backgroundColor: ['#4ECDC4'] }] }, {});
+                        categoryChart = renderChart(document.getElementById('chartCategory'), 'doughnut', { 
+                            labels: labels, 
+                            datasets: [{ 
+                                data: data, 
+                                backgroundColor: colors,
+                                borderWidth: 1
+                            }] 
+                        }, {
+                            plugins: {
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            return `Total: ${total} produk`;
+                                        }
+                                    }
+                                },
+                                legend: { display: false } // Hide legend because it would be repetitive
+                            }
+                        });
                     }
                 });
 
