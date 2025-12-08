@@ -527,7 +527,6 @@
             <a href="{{ route('catalog') }}" class="btn-cancel">Batal</a>
         </form>
     </div>
-
     <script>
         function updateFileName(input, labelId, nameId) {
             const label = document.getElementById(labelId);
@@ -550,17 +549,32 @@
             const kecamatanSelect = document.getElementById('kecamatan');
             const kelurahanSelect = document.getElementById('kelurahan');
 
+            // Helper function untuk mengambil data dari response
+            function getDataArray(response) {
+                // API wilayah.id mengembalikan { data: [...] }
+                if (response && response.data && Array.isArray(response.data)) {
+                    return response.data;
+                }
+                // Jika response langsung array
+                if (Array.isArray(response)) {
+                    return response;
+                }
+                return [];
+            }
+
             // Provinsi
             fetch('/api/wilayah/provinsi')
                 .then(res => res.json())
-                .then(data => {
+                .then(response => {
+                    const data = getDataArray(response);
                     data.forEach(item => {
                         const opt = document.createElement('option');
-                        opt.value = item.id;
+                        opt.value = item.code;
                         opt.textContent = item.name;
                         provinsiSelect.appendChild(opt);
                     });
-                });
+                })
+                .catch(err => console.error('Error loading provinsi:', err));
 
             provinsiSelect.addEventListener('change', function() {
                 kabupatenSelect.innerHTML = '<option value="">Pilih Kabupaten/Kota</option>';
@@ -569,14 +583,16 @@
                 if (!this.value) return;
                 fetch(`/api/wilayah/kabupaten?provinsi_id=${this.value}`)
                     .then(res => res.json())
-                    .then(data => {
+                    .then(response => {
+                        const data = getDataArray(response);
                         data.forEach(item => {
                             const opt = document.createElement('option');
-                            opt.value = item.id;
+                            opt.value = item.code;
                             opt.textContent = item.name;
                             kabupatenSelect.appendChild(opt);
                         });
-                    });
+                    })
+                    .catch(err => console.error('Error loading kabupaten:', err));
             });
 
             kabupatenSelect.addEventListener('change', function() {
@@ -585,14 +601,16 @@
                 if (!this.value) return;
                 fetch(`/api/wilayah/kecamatan?kabupaten_id=${this.value}`)
                     .then(res => res.json())
-                    .then(data => {
+                    .then(response => {
+                        const data = getDataArray(response);
                         data.forEach(item => {
                             const opt = document.createElement('option');
-                            opt.value = item.id;
+                            opt.value = item.code;
                             opt.textContent = item.name;
                             kecamatanSelect.appendChild(opt);
                         });
-                    });
+                    })
+                    .catch(err => console.error('Error loading kecamatan:', err));
             });
 
             kecamatanSelect.addEventListener('change', function() {
@@ -600,14 +618,16 @@
                 if (!this.value) return;
                 fetch(`/api/wilayah/kelurahan?kecamatan_id=${this.value}`)
                     .then(res => res.json())
-                    .then(data => {
+                    .then(response => {
+                        const data = getDataArray(response);
                         data.forEach(item => {
                             const opt = document.createElement('option');
                             opt.value = item.name;
                             opt.textContent = item.name;
                             kelurahanSelect.appendChild(opt);
                         });
-                    });
+                    })
+                    .catch(err => console.error('Error loading kelurahan:', err));
             });
         });
     </script>

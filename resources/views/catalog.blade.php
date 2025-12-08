@@ -373,6 +373,19 @@
             };
         }
 
+        // Helper function untuk mengambil data dari response API
+        function getDataArray(response) {
+            // API wilayah.id mengembalikan { data: [...] }
+            if (response && response.data && Array.isArray(response.data)) {
+                return response.data;
+            }
+            // Jika response langsung array
+            if (Array.isArray(response)) {
+                return response;
+            }
+            return [];
+        }
+
         (function () {
             const input = document.getElementById('catalogSearch');
             const storeFilter = document.getElementById('storeFilter');
@@ -388,10 +401,12 @@
             async function loadProvinces() {
                 try {
                     const res = await fetch('/api/wilayah/provinsi');
-                    const data = await res.json();
+                    const response = await res.json();
+                    const data = getDataArray(response);
                     data.forEach(item => {
                         const opt = document.createElement('option');
                         opt.value = item.name;
+                        opt.dataset.code = item.code; // Simpan code untuk fetch kabupaten
                         opt.textContent = item.name;
                         provinceFilter.appendChild(opt);
                     });
@@ -403,17 +418,20 @@
             // Load cities when province changes
             provinceFilter.addEventListener('change', async function() {
                 cityFilter.innerHTML = '<option value="">Semua Kab/Kota</option>';
-                if (!this.value) return;
+                if (!this.value) {
+                    doSearch();
+                    return;
+                }
                 
                 try {
-                    // Find province ID
-                    const provRes = await fetch('/api/wilayah/provinsi');
-                    const provData = await provRes.json();
-                    const province = provData.find(p => p.name === this.value);
+                    // Get province code from selected option
+                    const selectedOption = provinceFilter.options[provinceFilter.selectedIndex];
+                    const provinceCode = selectedOption.dataset.code;
                     
-                    if (province) {
-                        const res = await fetch(`/api/wilayah/kabupaten?provinsi_id=${province.id}`);
-                        const data = await res.json();
+                    if (provinceCode) {
+                        const res = await fetch(`/api/wilayah/kabupaten?provinsi_id=${provinceCode}`);
+                        const response = await res.json();
+                        const data = getDataArray(response);
                         data.forEach(item => {
                             const opt = document.createElement('option');
                             opt.value = item.name;
@@ -564,7 +582,7 @@
                 window.location.search = '';
             });
 
-             // Initially hide the JS pagination wrapper
+            // Initially hide the JS pagination wrapper
             paginationWrapper.style.display = 'none';
 
         })();

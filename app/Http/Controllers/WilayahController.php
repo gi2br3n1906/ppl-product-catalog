@@ -1,18 +1,18 @@
 <?php
+// filepath: d:\Coding\PPL\ppl-product-catalog\app\Http\Controllers\WilayahController.php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-
-
 use Illuminate\Support\Facades\Http;
 
 class WilayahController extends Controller
 {
-    // API eksternal: https://emsifa.github.io/api-wilayah-indonesia/
     public function provinsi()
     {
-        $response = Http::get('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json');
+        $response = Http::withoutVerifying()
+            ->get('https://wilayah.id/api/provinces.json');
         return response()->json($response->json());
     }
 
@@ -20,7 +20,8 @@ class WilayahController extends Controller
     {
         $provinsi_id = $request->query('provinsi_id');
         if (!$provinsi_id) return response()->json([]);
-        $response = Http::get("https://www.emsifa.com/api-wilayah-indonesia/api/regencies/$provinsi_id.json");
+        $response = Http::withoutVerifying()
+            ->get("https://wilayah.id/api/regencies/$provinsi_id.json");
         return response()->json($response->json());
     }
 
@@ -28,7 +29,8 @@ class WilayahController extends Controller
     {
         $kabupaten_id = $request->query('kabupaten_id');
         if (!$kabupaten_id) return response()->json([]);
-        $response = Http::get("https://www.emsifa.com/api-wilayah-indonesia/api/districts/$kabupaten_id.json");
+        $response = Http::withoutVerifying()
+            ->get("https://wilayah.id/api/districts/$kabupaten_id.json");
         return response()->json($response->json());
     }
 
@@ -36,7 +38,8 @@ class WilayahController extends Controller
     {
         $kecamatan_id = $request->query('kecamatan_id');
         if (!$kecamatan_id) return response()->json([]);
-        $response = Http::get("https://www.emsifa.com/api-wilayah-indonesia/api/villages/$kecamatan_id.json");
+        $response = Http::withoutVerifying()
+            ->get("https://wilayah.id/api/villages/$kecamatan_id.json");
         return response()->json($response->json());
     }
 }
