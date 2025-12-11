@@ -342,6 +342,11 @@
                         <div style="border-bottom:1px solid #eee; padding-bottom:14px; margin-bottom:14px;">
                             <div style="font-weight:600; color:#01343B;">{{ $review->reviewer_name }}</div>
                             <div style="font-size:13px; color:#666;">{{ $review->reviewer_email }} | {{ $review->reviewer_phone }}</div>
+                            @if($review->provinsi)
+                                <div style="font-size:13px; color:#666; margin-top:2px;">
+                                    <span style="background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:4px; font-weight:500;">{{ $review->provinsi }}</span>
+                                </div>
+                            @endif
                             <div style="margin:6px 0;">
                                 <span style="color:#FFD700; font-weight:700; font-size:15px;">{{ $review->rating }} / 5</span>
                             </div>
@@ -407,10 +412,24 @@
         document.addEventListener('DOMContentLoaded', function() {
             const provinceSelect = document.getElementById('provinsi');
             
+            // Helper function untuk mengambil data dari response
+            function getDataArray(response) {
+                // API wilayah.id mengembalikan { data: [...] }
+                if (response && response.data && Array.isArray(response.data)) {
+                    return response.data;
+                }
+                // Jika response langsung array
+                if (Array.isArray(response)) {
+                    return response;
+                }
+                return [];
+            }
+            
             // Load provinces
             fetch('/api/wilayah/provinsi')
                 .then(response => response.json())
-                .then(data => {
+                .then(response => {
+                    const data = getDataArray(response);
                     data.forEach(item => {
                         const option = document.createElement('option');
                         option.value = item.name;
