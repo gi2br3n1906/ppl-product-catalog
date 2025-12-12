@@ -234,7 +234,7 @@
                 if (province) url.searchParams.set('province', province);
                 if (city) url.searchParams.set('city', city);
                 url.searchParams.set('page', page);
-                url.searchParams.set('per_page', 12);
+                url.searchParams.set('per_page', 15);
 
                 try {
                     const res = await fetch(url.toString());

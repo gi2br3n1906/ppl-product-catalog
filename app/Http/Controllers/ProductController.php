@@ -21,7 +21,7 @@ class ProductController extends Controller
             return redirect()->route('seller.dashboard');
         }
 
-        $products = Product::with('images')->orderBy('created_at', 'desc')->paginate(12);
+        $products = Product::with('images')->orderBy('created_at', 'desc')->paginate(15);
         return view('catalog', compact('products'));
     }
 
@@ -36,7 +36,7 @@ class ProductController extends Controller
         $store = trim((string) $request->query('store', ''));
         $province = $request->query('province');
         $city = $request->query('city');
-        $perPage = max(6, (int) $request->query('per_page', 12));
+        $perPage = max(6, (int) $request->query('per_page', 15));
         $page = max(1, (int) $request->query('page', 1));
 
         $query = Product::with(['images', 'seller'])
@@ -48,7 +48,8 @@ class ProductController extends Controller
         if ($q !== '') {
             $query->where(function ($qb) use ($q) {
                 $qb->where('products.name', 'like', "%{$q}%")
-                   ->orWhere('products.description', 'like', "%{$q}%");
+                   ->orWhere('products.description', 'like', "%{$q}%")
+                   ->orWhere('seller_registrations.nama_toko', 'like', "%{$q}%");
             });
         }
 
