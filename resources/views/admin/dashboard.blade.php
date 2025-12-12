@@ -26,13 +26,8 @@
         .stat-card { background: white; padding: 24px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
         .stat-label { color: #6b7280; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
         .stat-value { color: #111827; font-size: 30px; font-weight: 700; letter-spacing:-0.5px; }
-        .main-grid { display:grid; grid-template-columns: 1fr 360px; gap: 24px; }
         .chart-card { background: white; border-radius:10px; border: 1px solid #e5e7eb; padding: 22px; min-height: 420px; }
         .card-title { font-size: 16px; font-weight:700; color: #111827; margin-bottom: 12px; }
-        .best-sellers-card, .low-stock-card { background: white; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 1px 2px rgba(0,0,0,0.05); padding: 18px; }
-        .product-item { display:flex; align-items:center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #f3f4f6; }
-        .product-item:last-child { border-bottom:none; }
-        .product-name { font-size:14px; font-weight:600; color: #374151; }
         @media (max-width: 1024px) { .main-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -72,68 +67,50 @@
             </div>
         </div>
 
-        <div class="main-grid">
-            <div style="display: flex; flex-direction: column; gap: 24px;">
-                <!-- Top: Wide Chart (Sellers by Province) -->
-                <div class="chart-card">
-                    <div class="chart-header-row">
-                        <div>
-                            <div class="card-title">Sellers by Province</div>
-                            <p style="color:#6b7280; font-size:13px;">Distribusi seller berdasarkan provinsi.</p>
-                        </div>
-                    </div>
-                    <div style="height:300px; position: relative;">
-                        <canvas id="chartProvince"></canvas>
+        <!-- Top Row: Products by Category & Seller Status -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; margin-bottom: 24px;">
+            <!-- Left: Category Distribution -->
+            <div class="chart-card" style="min-height: 380px;">
+                <div class="chart-header-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                    <div>
+                        <div class="card-title">Products by Category</div>
+                        <p style="color:#6b7280; font-size:13px;">Sebaran produk per kategori.</p>
                     </div>
                 </div>
-
-                <!-- Bottom: Two Smaller Charts Side-by-Side -->
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
-                    <!-- Left: Category Distribution -->
-                    <div class="chart-card" style="min-height: 380px;">
-                        <div class="chart-header-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-                            <div>
-                                <div class="card-title">Products by Category</div>
-                                <p style="color:#6b7280; font-size:13px;">Sebaran produk per kategori.</p>
-                            </div>
-                        </div>
-                        <div style="margin-bottom: 12px;">
-                            <select id="categoryFilter" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #d1d5db;">
-                                <option value="">Semua Kategori</option>
-                            </select>
-                        </div>
-                        <div style="height:220px; position: relative; display: flex; justify-content: center;">
-                            <canvas id="chartCategory"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Right: Active vs Inactive -->
-                    <div class="chart-card" style="min-height: 380px;">
-                        <div class="chart-header-row">
-                            <div>
-                                <div class="card-title">Seller Status</div>
-                                <p style="color:#6b7280; font-size:13px;">Perbandingan status seller.</p>
-                            </div>
-                        </div>
-                        <div style="height:220px; position: relative; display: flex; justify-content: center; margin-top: 20px;">
-                            <canvas id="chartActive"></canvas>
-                        </div>
-                    </div>
+                <div style="margin-bottom: 12px;">
+                    <select id="categoryFilter" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #d1d5db;">
+                        <option value="">Semua Kategori</option>
+                    </select>
+                </div>
+                <div style="height:220px; position: relative; display: flex; justify-content: center;">
+                    <canvas id="chartCategory"></canvas>
                 </div>
             </div>
 
-            <!-- Right Sidebar -->
-            <div>
-                <div class="best-sellers-card">
-                    <div class="card-title">Top Rated Products</div>
-                    <div id="topProductsList" style="overflow:auto; max-height:360px;">
-                        <!-- populated via JS -->
+            <!-- Right: Active vs Inactive -->
+            <div class="chart-card" style="min-height: 380px;">
+                <div class="chart-header-row">
+                    <div>
+                        <div class="card-title">Seller Status</div>
+                        <p style="color:#6b7280; font-size:13px;">Perbandingan status seller.</p>
                     </div>
                 </div>
-                <div class="low-stock-card" style="margin-top:20px;">
-                    <div class="card-title">Low Stock Alerts</div>
-                    <div id="lowStockList"></div>
+                <div style="height:220px; position: relative; display: flex; justify-content: center; margin-top: 20px;">
+                    <canvas id="chartActive"></canvas>
                 </div>
+            </div>
+        </div>
+
+        <!-- Bottom: Wide Chart (Sellers by Province) -->
+        <div class="chart-card">
+            <div class="chart-header-row">
+                <div>
+                    <div class="card-title">Sellers by Province</div>
+                    <p style="color:#6b7280; font-size:13px;">Distribusi seller berdasarkan provinsi.</p>
+                </div>
+            </div>
+            <div style="height:300px; position: relative;">
+                <canvas id="chartProvince"></canvas>
             </div>
         </div>
     </div>
@@ -152,11 +129,6 @@
             return res.ok ? res.json() : { labels: [], data: [] };
         }
 
-        async function fetchLowStock() {
-            const res = await fetch('/api/admin/dashboard/low-stock');
-            return res.ok ? res.json() : { products: [] };
-        }
-
         async function fetchSellersByProvince() {
             const res = await fetch('/api/admin/dashboard/sellers-by-province');
             return res.ok ? res.json() : { labels: [], data: [] };
@@ -165,11 +137,6 @@
         async function fetchSellerStatusComparison() {
             const res = await fetch('/api/admin/dashboard/seller-status-comparison');
             return res.ok ? res.json() : { labels: [], data: [] };
-        }
-
-        async function fetchTopProducts() {
-            const res = await fetch('/api/admin/reports/top-products?limit=10');
-            return res.ok ? res.json() : { products: [] };
         }
 
         function renderChart(ctx, type, data, options) {
@@ -263,30 +230,6 @@
                     document.getElementById('chartActive').parentElement.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#6b7280;">No data available</div>';
                 } else {
                     renderChart(document.getElementById('chartActive'), 'pie', { labels: status.labels, datasets: [{ data: status.data, backgroundColor:['#8BE3B9', '#FFD1A6'] }] }, {});
-                }
-
-                const top = await fetchTopProducts();
-                const list = document.getElementById('topProductsList');
-                top.products.forEach(p => {
-                    const el = document.createElement('div');
-                    el.style.padding = '8px 4px';
-                    el.style.borderBottom = '1px solid #eee';
-                    el.innerHTML = `<strong>${p.name}</strong> - ${p.store_name || '-'} <span style='float:right;'>${(p.avg_rating || 0).toFixed(2)} ★</span>`;
-                    list.appendChild(el);
-                });
-
-                // low stock list
-                const low = await fetchLowStock();
-                const lowList = document.getElementById('lowStockList');
-                if (low.products && low.products.length) {
-                    low.products.slice(0, 6).forEach(p => {
-                        const el = document.createElement('div');
-                        el.className = 'product-item';
-                        el.innerHTML = `<div style="flex:1;"><div class='product-name'>${p.name}</div><div style='color:#6b7280; font-size:12px;'>Stock: ${p.stock}</div></div>`;
-                        lowList.appendChild(el);
-                    });
-                } else {
-                    lowList.innerHTML = '<p style="color:#6b7280;">No low stock alerts</p>';
                 }
 
             } catch (err) {

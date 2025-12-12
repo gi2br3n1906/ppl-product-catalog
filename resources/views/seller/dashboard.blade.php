@@ -413,7 +413,7 @@
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-label">Total Penjualan (Bulan Ini)</div>
-                <div class="stat-value">Rp 8.500.000</div>
+                <div class="stat-value">Rp 850.000</div>
                 <div class="stat-trend positive">
                     <span>↗ 12%</span> dari bulan lalu
                 </div>
