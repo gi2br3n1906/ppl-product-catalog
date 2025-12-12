@@ -8,99 +8,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f5f5;
-            min-height: 100vh;
-        }
-        
-        .navbar {
-            background: #01343B;
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 3px solid #ACEB02;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        
-        .navbar-brand {
-            font-size: 20px;
-            font-weight: 600;
-            color: white;
-            text-decoration: none;
-        }
-        
-        .navbar-right {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .user-info {
-            color: white;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .btn-logout {
-            background: transparent;
-            border: 2px solid white;
-            color: white;
-            padding: 8px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-        
-        .btn-logout:hover {
-            background: white;
-            color: #01343B;
-        }
-        .btn-login {
-            background: #ACEB02;
-            border: 2px solid #ACEB02;
-            color: #01343B;
-            padding: 8px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-login:hover {
-            background: #9dd302;
-            border-color: #9dd302;
-        }
-
-        .btn-register {
-            background: #ACEB02;
-            border: 2px solid #ACEB02;
-            color: #01343B;
-            padding: 8px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-register:hover {
-            background: #9dd302;
-            border-color: #9dd302;
-        }
+        body { background: #f5f5f5; }
         
         .container {
             max-width: 900px;
@@ -213,22 +121,84 @@
 
     </style>
 </head>
-<body>
-    <nav class="navbar">
-        <a href="{{ route('catalog') }}" class="navbar-brand">CampusMarket</a>
-        <div class="navbar-right">
-            @auth
-                <div class="user-info">
-                    <span>Halo, {{ Auth::user()->name }}!</span>
-                    <form action="{{ route('logout') }}" method="POST" style="display: inline;">
-                        @csrf
-                        <button type="submit" class="btn-logout">Logout</button>
-                    </form>
+<body class="antialiased font-sans">
+    <nav class="bg-[#01343B] shadow-md sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-between h-20 gap-4">
+                <!-- Brand -->
+                <div class="flex-shrink-0">
+                    <a href="{{ route('catalog') }}" class="text-white text-xl font-bold">CampusMarket</a>
                 </div>
-            @else
-                <a href="{{ route('login') }}" class="btn-login">Login</a>
-                <a href="{{ route('seller.register.form') }}" class="btn-register">Daftar Seller</a>
-            @endauth
+
+                <!-- Middle Section: Filter + Search -->
+                <div class="flex-grow flex items-center justify-center gap-3">
+                    <!-- Filter Button -->
+                    <div class="relative flex-shrink-0">
+                        <button id="filterToggleButton" class="h-11 px-4 flex items-center bg-white/10 hover:bg-white/20 rounded-lg text-sm font-semibold text-white transition">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                            Filter
+                        </button>
+                    </div>
+
+                    <!-- Search Bar -->
+                    <div class="relative flex-grow max-w-xl">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 z-10">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        </span>
+                        <input id="catalogSearch" type="search" placeholder="Cari produk di CampusMarket..." class="w-full h-11 pl-12 pr-4 bg-white text-gray-900 rounded-lg border-2 border-transparent focus:border-[#ACEB02] focus:ring-0 transition-all duration-300" />
+                        
+                        <!-- Search Results Dropdown -->
+                        <div id="searchResultsDropdown" class="hidden absolute top-full mt-2 left-0 right-0 bg-white shadow-lg border border-gray-200 rounded-lg z-50 max-h-96 overflow-y-auto">
+                            <div id="searchResultsContent" class="p-4">
+                                <!-- Search results will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Auth -->
+                <div class="flex-shrink-0 flex items-center space-x-4">
+                    @auth
+                        <div class="text-white hidden md:block">
+                            Halo, {{ Auth::user()->name }}!
+                        </div>
+                        <form action="{{ route('logout') }}" method="POST" class="inline">
+                            @csrf
+                            <button type="submit" class="px-4 py-2 bg-transparent border-2 border-white text-white rounded-md font-semibold hover:bg-white hover:text-[#01343B] transition">Logout</button>
+                        </form>
+                    @else
+                        <a href="{{ route('login') }}" class="px-4 py-2 bg-[#ACEB02] text-[#01343B] rounded-md font-semibold hover:bg-[#9dd302] transition">Login</a>
+                        <a href="{{ route('seller.register.form') }}" class="px-4 py-2 bg-[#ACEB02] text-[#01343B] rounded-md font-semibold hover:bg-[#9dd302] transition hidden sm:flex">Daftar Seller</a>
+                    @endauth
+                </div>
+            </div>
+        </div>
+        
+        <!-- Filter Dropdown -->
+        <div id="filterDropdown" class="hidden absolute top-full left-0 right-0 bg-white shadow-lg border-t border-gray-200 z-20">
+            <div class="max-w-7xl mx-auto p-4">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Nama Toko</label>
+                        <input id="storeFilter" type="text" placeholder="Cari nama toko..." class="w-full border-gray-300 rounded-md shadow-sm text-sm" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Provinsi</label>
+                        <select id="provinceFilter" class="w-full border-gray-300 rounded-md shadow-sm text-sm">
+                            <option value="">Semua Provinsi</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Kabupaten/Kota</label>
+                        <select id="cityFilter" class="w-full border-gray-300 rounded-md shadow-sm text-sm">
+                            <option value="">Semua Kab/Kota</option>
+                        </select>
+                    </div>
+                    <div class="flex items-end">
+                        <button id="resetFilters" class="w-full px-4 py-2 bg-gray-600 text-white rounded-md font-semibold hover:bg-gray-700 transition text-sm">Reset Filter</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </nav>
 
@@ -501,6 +471,116 @@
             if (imgElement && productImages.length > 0) {
                 imgElement.src = productImages[currentImageIndex];
             }
+        }
+
+        // Filter dropdown toggle
+        const filterToggleBtn = document.getElementById('filterToggleButton');
+        const filterDropdown = document.getElementById('filterDropdown');
+
+        if (filterToggleBtn && filterDropdown) {
+            filterToggleBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                filterDropdown.classList.toggle('hidden');
+                // Close search dropdown when filter opens
+                searchResultsDropdown.classList.add('hidden');
+            });
+            
+            document.addEventListener('click', (e) => {
+                if (!filterDropdown.contains(e.target) && !filterToggleBtn.contains(e.target)) {
+                    filterDropdown.classList.add('hidden');
+                }
+            });
+        }
+
+        // Search functionality with dropdown
+        const searchInput = document.getElementById('catalogSearch');
+        const searchResultsDropdown = document.getElementById('searchResultsDropdown');
+        const searchResultsContent = document.getElementById('searchResultsContent');
+        let searchTimeout;
+
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.trim();
+                
+                // Bersihkan timeout sebelumnya
+                clearTimeout(searchTimeout);
+                
+                if (query.length === 0) {
+                    searchResultsDropdown.classList.add('hidden');
+                    return;
+                }
+                
+                // Debounce search - tunggu 300ms setelah user berhenti mengetik
+                searchTimeout = setTimeout(() => {
+                    performSearch(query);
+                }, 300);
+            });
+            
+            // Close search dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!searchInput.contains(e.target) && !searchResultsDropdown.contains(e.target)) {
+                    searchResultsDropdown.classList.add('hidden');
+                }
+            });
+        }
+
+        async function performSearch(query) {
+            try {
+                searchResultsContent.innerHTML = '<div class="text-center text-gray-500 py-4">Mencari...</div>';
+                searchResultsDropdown.classList.remove('hidden');
+                
+                const response = await fetch(`/api/products/search?q=${encodeURIComponent(query)}&per_page=10`);
+                const data = await response.json();
+                
+                if (data.data && data.data.length > 0) {
+                    renderSearchResults(data.data);
+                } else {
+                    searchResultsContent.innerHTML = '<div class="text-center text-gray-500 py-4">Tidak ada produk ditemukan</div>';
+                }
+            } catch (error) {
+                console.error('Search error:', error);
+                searchResultsContent.innerHTML = '<div class="text-center text-red-500 py-4">Terjadi kesalahan saat mencari</div>';
+            }
+        }
+
+        function renderSearchResults(products) {
+            let html = '<div class="grid grid-cols-1 gap-3">';
+            
+            products.forEach(product => {
+                const rating = product.average_rating || 0;
+                const reviewsCount = product.reviews_count || 0;
+                
+                html += `
+                    <a href="${product.slug}" class="flex gap-3 p-3 hover:bg-gray-50 rounded-lg transition border border-gray-100">
+                        <div class="flex-shrink-0 w-20 h-20 bg-gray-100 rounded-lg overflow-hidden">
+                            ${product.image ? `<img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover">` : '<div class="w-full h-full flex items-center justify-center text-xs text-gray-400">No Image</div>'}
+                        </div>
+                        <div class="flex-grow min-w-0">
+                            <div class="font-semibold text-gray-800 text-sm truncate">${product.name}</div>
+                            <div class="font-bold text-gray-900 text-base">Rp ${Number(product.price).toLocaleString('id-ID')}</div>
+                            <div class="flex items-center gap-1 mt-1">
+                                <svg class="w-3 h-3 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <span class="text-xs text-gray-700">${rating.toFixed(1)}</span>
+                                <span class="text-xs text-gray-500">(${reviewsCount})</span>
+                                <span class="text-xs text-gray-500 ml-2">Stok: ${product.stock}</span>
+                            </div>
+                        </div>
+                    </a>
+                `;
+            });
+            
+            html += '</div>';
+            html += `<div class="mt-3 pt-3 border-t border-gray-200"><a href="{{ route('catalog') }}" class="block text-center text-sm text-[#01343B] font-semibold hover:underline">Lihat Semua Hasil →</a></div>`;
+            
+            searchResultsContent.innerHTML = html;
+        }
+
+        // Reset filters button - redirect to catalog
+        const resetBtn = document.getElementById('resetFilters');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => {
+                window.location.href = `{{ route('catalog') }}`;
+            });
         }
     </script>
 </body>
