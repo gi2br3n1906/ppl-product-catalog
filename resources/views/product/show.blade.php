@@ -411,6 +411,30 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const provinceSelect = document.getElementById('provinsi');
+            const phoneInput = document.getElementById('reviewer_phone');
+            
+            // Validasi input nomor HP hanya angka
+            phoneInput.addEventListener('input', function(e) {
+                // Hapus karakter selain angka
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+            
+            // Cegah input karakter non-angka saat mengetik
+            phoneInput.addEventListener('keypress', function(e) {
+                // Izinkan: backspace, delete, tab, escape, enter
+                if ([8, 9, 27, 13].indexOf(e.keyCode) !== -1 ||
+                    // Izinkan: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+                    (e.keyCode === 65 && e.ctrlKey === true) ||
+                    (e.keyCode === 67 && e.ctrlKey === true) ||
+                    (e.keyCode === 86 && e.ctrlKey === true) ||
+                    (e.keyCode === 88 && e.ctrlKey === true)) {
+                    return;
+                }
+                // Pastikan hanya angka yang diketik
+                if ((e.keyCode < 48 || e.keyCode > 57)) {
+                    e.preventDefault();
+                }
+            });
             
             // Helper function untuk mengambil data dari response
             function getDataArray(response) {

@@ -107,7 +107,11 @@
             <div id="productGridWrapper">
                 <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
                     @forelse($products as $product)
-                        <div class="product-card bg-white rounded-lg border border-gray-200 overflow-hidden flex flex-col justify-between">
+                        @php
+                            $avgRating = $product->reviews()->avg('rating') ?? 0;
+                            $reviewsCount = $product->reviews()->count();
+                        @endphp
+                        <a href="{{ route('product.show', $product) }}" class="product-card bg-white rounded-lg border border-gray-200 overflow-hidden flex flex-col justify-between hover:shadow-lg transition-shadow duration-200 cursor-pointer">
                             <div class="product-image-wrapper p-2">
                                 @php
                                     $primaryImage = isset($product->images) ? collect($product->images)->where('is_primary', true)->first() : null;
@@ -122,10 +126,14 @@
                             <div class="p-3">
                                 <div class="font-bold text-gray-800 text-base mb-1 truncate">{{ $product->name }}</div>
                                 <div class="font-semibold text-gray-900 mb-2">Rp {{ number_format($product->price, 0, ',', '.') }}</div>
-                                <div class="text-sm text-gray-500 mb-3">Stok: {{ $product->stock }}</div>
-                                <a href="{{ route('product.show', $product) }}" class="w-full text-center px-3 py-2 bg-gray-100 border border-gray-300 text-gray-800 rounded-md font-semibold hover:bg-gray-200 transition text-sm">Detail</a>
+                                <div class="flex items-center gap-1 mb-2">
+                                    <svg class="w-3 h-3 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                    <span class="text-xs text-gray-700">{{ number_format($avgRating, 1) }}</span>
+                                    <span class="text-xs text-gray-500">({{ $reviewsCount }})</span>
+                                </div>
+                                <div class="text-sm text-gray-500">Stok: {{ $product->stock }}</div>
                             </div>
-                        </div>
+                        </a>
                     @empty
                         <div id="noProductsMessage" class="col-span-full text-center py-12 text-gray-500">Tidak ada produk untuk ditampilkan.</div>
                     @endforelse
@@ -252,18 +260,24 @@
                     return;
                 }
                 items.forEach(p => {
+                    const rating = p.average_rating || 0;
+                    const reviewsCount = p.reviews_count || 0;
                     const card = `
-                        <div class="product-card bg-white rounded-lg border border-gray-200 overflow-hidden flex flex-col justify-between">
+                        <a href="${p.slug}" class="product-card bg-white rounded-lg border border-gray-200 overflow-hidden flex flex-col justify-between hover:shadow-lg transition-shadow duration-200 cursor-pointer">
                             <div class="product-image-wrapper p-2">
                                 ${p.image ? `<img src="${p.image}" alt="${p.name}" class="w-full h-full object-contain">` : '<div class="w-full h-full bg-gray-100 flex items-center justify-center text-gray-500 font-semibold">Gambar Produk</div>'}
                             </div>
                             <div class="p-3">
                                 <div class="font-bold text-gray-800 text-base mb-1 truncate">${p.name}</div>
                                 <div class="font-semibold text-gray-900 mb-2">Rp ${Number(p.price).toLocaleString('id-ID')}</div>
-                                <div class="text-sm text-gray-500 mb-3">Stok: ${p.stock}</div>
-                                <a href="${p.slug}" class="w-full text-center px-3 py-2 bg-gray-100 border border-gray-300 text-gray-800 rounded-md font-semibold hover:bg-gray-200 transition text-sm">Detail</a>
+                                <div class="flex items-center gap-1 mb-2">
+                                    <svg class="w-3 h-3 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                    <span class="text-xs text-gray-700">${rating.toFixed(1)}</span>
+                                    <span class="text-xs text-gray-500">(${reviewsCount})</span>
+                                </div>
+                                <div class="text-sm text-gray-500">Stok: ${p.stock}</div>
                             </div>
-                        </div>
+                        </a>
                     `;
                     grid.insertAdjacentHTML('beforeend', card);
                 });

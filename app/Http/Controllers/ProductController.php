@@ -74,10 +74,15 @@ class ProductController extends Controller
 
         $paginator = $query->paginate($perPage, ['*'], 'page', $page);
 
-        // Map product data for JSON: include primary image url
+        // Map product data for JSON: include primary image url and rating data
         $items = collect($paginator->items())->map(function ($product) {
             $primaryImage = isset($product->images) ? collect($product->images)->where('is_primary', true)->first() : null;
             $img = $primaryImage ? asset('storage/' . $primaryImage->image_path) : null;
+            
+            // Calculate average rating and reviews count
+            $averageRating = $product->reviews()->avg('rating') ?? 0;
+            $reviewsCount = $product->reviews()->count();
+            
             return [
                 'id' => $product->id,
                 'name' => $product->name,
@@ -86,6 +91,8 @@ class ProductController extends Controller
                 'category' => $product->category,
                 'image' => $img,
                 'slug' => route('product.show', $product),
+                'average_rating' => round($averageRating, 1),
+                'reviews_count' => $reviewsCount,
             ];
         })->toArray();
 
