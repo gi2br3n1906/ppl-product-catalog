@@ -89,7 +89,37 @@
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto py-8 px-4">
+    <!-- Hero Banner -->
+    <div class="bg-gradient-to-r from-[#01343B] to-[#025862] text-white py-16 relative overflow-hidden">
+        <!-- Background Image with Opacity -->
+        <div class="absolute inset-0 opacity-50">
+            <img src="{{ asset('images/campus-shopping-banner.png') }}" alt="Campus Shopping Background" class="w-full h-full object-cover">
+        </div>
+        
+        <!-- Content -->
+        <div class="max-w-7xl mx-auto px-4 relative z-10">
+            <div class="flex items-center justify-between">
+                <div class="max-w-2xl">
+                    <h1 class="text-4xl md:text-5xl font-bold mb-4">Selamat Datang di CampusMarket</h1>
+                    <p class="text-lg md:text-xl text-gray-200 mb-6">
+                        Marketplace terpercaya untuk mahasiswa. Temukan berbagai produk berkualitas dengan harga terjangkau.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#products" class="px-6 py-3 bg-[#ACEB02] text-[#01343B] rounded-lg font-semibold hover:bg-[#9dd302] transition">
+                            Jelajahi Produk
+                        </a>
+                        @guest
+                            <a href="{{ route('seller.register.form') }}" class="px-6 py-3 bg-transparent border-2 border-white text-white rounded-lg font-semibold hover:bg-white hover:text-[#01343B] transition">
+                                Mulai Berjualan
+                            </a>
+                        @endguest
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main id="products" class="max-w-7xl mx-auto py-8 px-4">
         <div class="bg-white rounded-lg shadow-sm p-6">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-2xl font-bold text-gray-800">Katalog Produk</h2>
