@@ -70,14 +70,40 @@
             padding: 32px 24px;
         }
         
-        /* Welcome Section */
+        /* Welcome Section with Banner */
         .welcome-header {
             margin-bottom: 32px;
+            position: relative;
+            padding: 40px;
+            background: linear-gradient(to right, #01343B, #025862);
+            border-radius: 16px;
+            overflow: hidden;
+            color: white;
+            box-shadow: 0 4px 20px rgba(1, 52, 59, 0.15);
+        }
+        
+        .welcome-header-bg {
+            position: absolute;
+            inset: 0;
+            opacity: 0.3;
+            z-index: 0;
+        }
+        
+        .welcome-header-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .welcome-content {
+            position: relative;
+            z-index: 10;
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
             gap: 24px;
             flex-wrap: wrap;
+            width: 100%;
         }
         
         .welcome-text {
@@ -86,15 +112,18 @@
         }
 
         .welcome-text h1 {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 700;
-            color: #111827;
+            color: white;
             margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
         .welcome-text p {
-            color: #6b7280;
-            font-size: 14px;
+            color: rgba(255,255,255,0.9);
+            font-size: 15px;
+            max-width: 600px;
+            line-height: 1.5;
         }
 
         .btn-primary {
@@ -384,28 +413,33 @@
     <div class="container">
         <!-- Welcome Header -->
         <div class="welcome-header">
-            <div class="welcome-text">
-                <h1>Dashboard Overview</h1>
-                <p>Selamat datang kembali, {{ Auth::user()->name }}. Berikut adalah ringkasan performa toko Anda.</p>
+            <div class="welcome-header-bg">
+                <img src="{{ asset('images/campus-shopping-banner.png') }}" alt="Background">
             </div>
-            <div style="display: flex; gap: 12px;">
-                <a href="{{ route('seller.reports.index') }}" class="btn-primary" style="background-color: white; color: #01343B; border: 1px solid #01343B;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <line x1="16" y1="13" x2="8" y2="13"></line>
-                        <line x1="16" y1="17" x2="8" y2="17"></line>
-                        <polyline points="10 9 9 9 8 9"></polyline>
-                    </svg>
-                    Laporan
-                </a>
-                <a href="{{ route('seller.kelola-produk') }}" class="btn-primary">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="7" width="18" height="13" rx="2" ry="2"></rect>
-                        <path d="M16 3v4M8 3v4M3 11h18"></path>
-                    </svg>
-                    Kelola Produk
-                </a>
+            <div class="welcome-content">
+                <div class="welcome-text">
+                    <h1>Dashboard Overview</h1>
+                    <p>Selamat datang kembali, {{ Auth::user()->name }}. Berikut adalah ringkasan performa toko Anda.</p>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <a href="{{ route('seller.reports.index') }}" class="btn-primary" style="background-color: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); backdrop-filter: blur(4px);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        Laporan
+                    </a>
+                    <a href="{{ route('seller.kelola-produk') }}" class="btn-primary" style="background-color: #ACEB02; color: #01343B; border: none;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="7" width="18" height="13" rx="2" ry="2"></rect>
+                            <path d="M16 3v4M8 3v4M3 11h18"></path>
+                        </svg>
+                        Kelola Produk
+                    </a>
+                </div>
             </div>
         </div>
 
