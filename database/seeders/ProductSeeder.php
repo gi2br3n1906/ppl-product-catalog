@@ -13,7 +13,7 @@ class ProductSeeder extends Seeder
     public function run(): void
     {
         // Seeding a few demo products
-        Product::updateOrCreate([
+        $product1 = Product::updateOrCreate([
             'name' => 'Buku Tulis Spiral A5'
         ], [
             'name' => 'Buku Tulis Spiral A5',
@@ -21,10 +21,14 @@ class ProductSeeder extends Seeder
             'price' => 12000,
             'stock' => 150,
             'category' => 'Alat Tulis',
-            'image' => 'https://loremflickr.com/640/480/stationery?random=' . rand(),
+        ]);
+        \App\Models\ProductImage::updateOrCreate(['product_id' => $product1->id], [
+            'product_id' => $product1->id,
+            'image_path' => 'https://loremflickr.com/640/480/stationery?random=' . rand(),
+            'is_primary' => true,
         ]);
 
-        Product::updateOrCreate([
+        $product2 = Product::updateOrCreate([
             'name' => 'Pulpen Hitam 0.5mm'
         ], [
             'name' => 'Pulpen Hitam 0.5mm',
@@ -32,10 +36,14 @@ class ProductSeeder extends Seeder
             'price' => 8000,
             'stock' => 200,
             'category' => 'Alat Tulis',
-            'image' => 'https://loremflickr.com/640/480/pen?random=' . rand(),
+        ]);
+        \App\Models\ProductImage::updateOrCreate(['product_id' => $product2->id], [
+            'product_id' => $product2->id,
+            'image_path' => 'https://loremflickr.com/640/480/pen?random=' . rand(),
+            'is_primary' => true,
         ]);
 
-        Product::updateOrCreate([
+        $product3 = Product::updateOrCreate([
             'name' => 'Pensil 2B (Pack 12)'
         ], [
             'name' => 'Pensil 2B (Pack 12)',
@@ -43,10 +51,14 @@ class ProductSeeder extends Seeder
             'price' => 22000,
             'stock' => 100,
             'category' => 'Alat Tulis',
-            'image' => 'https://loremflickr.com/640/480/pencil?random=' . rand(),
+        ]);
+        \App\Models\ProductImage::updateOrCreate(['product_id' => $product3->id], [
+            'product_id' => $product3->id,
+            'image_path' => 'https://loremflickr.com/640/480/pencil?random=' . rand(),
+            'is_primary' => true,
         ]);
 
-        Product::updateOrCreate([
+        $product4 = Product::updateOrCreate([
             'name' => 'Sepatu New Balance'
         ], [
             'name' => 'Sepatu New Balance',
@@ -54,10 +66,14 @@ class ProductSeeder extends Seeder
             'price' => 750000,
             'stock' => 50,
             'category' => 'Fashion',
-            'image' => 'https://loremflickr.com/640/480/new_balance_shoes?random=' . rand(),
+        ]);
+        \App\Models\ProductImage::updateOrCreate(['product_id' => $product4->id], [
+            'product_id' => $product4->id,
+            'image_path' => 'https://loremflickr.com/640/480/new_balance_shoes?random=' . rand(),
+            'is_primary' => true,
         ]);
 
-        Product::updateOrCreate([
+        $product5 = Product::updateOrCreate([
             'name' => 'AC Daikin'
         ], [
             'name' => 'AC Daikin',
@@ -65,10 +81,14 @@ class ProductSeeder extends Seeder
             'price' => 3500000,
             'stock' => 20,
             'category' => 'Elektronik',
-            'image' => 'https://loremflickr.com/640/480/air_conditioner?random=' . rand(),
+        ]);
+        \App\Models\ProductImage::updateOrCreate(['product_id' => $product5->id], [
+            'product_id' => $product5->id,
+            'image_path' => 'https://loremflickr.com/640/480/air_conditioner?random=' . rand(),
+            'is_primary' => true,
         ]);
 
-        Product::updateOrCreate([
+        $product6 = Product::updateOrCreate([
             'name' => 'Lemari Kaca'
         ], [
             'name' => 'Lemari Kaca',
@@ -76,10 +96,14 @@ class ProductSeeder extends Seeder
             'price' => 1200000,
             'stock' => 15,
             'category' => 'Furnitur',
-            'image' => 'https://loremflickr.com/640/480/glass_cabinet?random=' . rand(),
+        ]);
+        \App\Models\ProductImage::updateOrCreate(['product_id' => $product6->id], [
+            'product_id' => $product6->id,
+            'image_path' => 'https://loremflickr.com/640/480/glass_cabinet?random=' . rand(),
+            'is_primary' => true,
         ]);
 
-        Product::updateOrCreate([
+        $product7 = Product::updateOrCreate([
             'name' => 'HP Xiaomi 17 Pro Max'
         ], [
             'name' => 'HP Xiaomi 17 Pro Max',
@@ -87,10 +111,14 @@ class ProductSeeder extends Seeder
             'price' => 8000000,
             'stock' => 30,
             'category' => 'Elektronik',
-            'image' => 'https://www.mobiledokan.com/media/xiaomi-17-pro-max-purple-official-image.webp',
+        ]);
+        \App\Models\ProductImage::updateOrCreate(['product_id' => $product7->id], [
+            'product_id' => $product7->id,
+            'image_path' => 'https://www.mobiledokan.com/media/xiaomi-17-pro-max-purple-official-image.webp',
+            'is_primary' => true,
         ]);
 
-        Product::updateOrCreate([
+        $product8 = Product::updateOrCreate([
             'name' => 'Lenovo Yoga Slim 7i'
         ], [
             'name' => 'Lenovo Yoga Slim 7i',
@@ -98,7 +126,11 @@ class ProductSeeder extends Seeder
             'price' => 15000000,
             'stock' => 25,
             'category' => 'Elektronik',
-            'image' => 'https://p3-ofp.static.pub/fes/cms/2024/11/21/gqcdxq3sua3gef6ms67xxktgdgep56977541.png',
+        ]);
+        \App\Models\ProductImage::updateOrCreate(['product_id' => $product8->id], [
+            'product_id' => $product8->id,
+            'image_path' => 'https://p3-ofp.static.pub/fes/cms/2024/11/21/gqcdxq3sua3gef6ms67xxktgdgep56977541.png',
+            'is_primary' => true,
         ]);
     }
 }
